@@ -6,14 +6,14 @@
 
 <script>
 export default {
-  name: 'Home',
-  data () {
-    
-  }
+  name: 'Home'
 }
 </script>
 
 <style lang="stylus" scoped>
+  .home
+    position absolute
+    left 4rem
 
 </style>
 
