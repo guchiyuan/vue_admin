@@ -1,7 +1,11 @@
 <template>
 <div class="navibar">
-  <el-menu default-active="2" class="el-menu-vertical-demo" @open="handleOpen" @close="handleClose" background-color="#545c64"
+  <el-menu default-active="" class="el-menu-vertical-demo" @select="handleSelect" @open="handleOpen" @close="handleClose" background-color="#545c64"
     text-color="#fff" active-text-color="#ffd04b">
+    <div class="title">
+      南京国图<br>授权管理系统      
+    </div>
+
     <el-submenu index="1">
       <template slot="title">
         <i class="el-icon-menu"></i>
@@ -43,28 +47,54 @@
 </template>
 
 <script>
-export default {
-  name:'Navi',
-  methods:{
-     handleOpen(key, keyPath) {
-         console.log(key, keyPath);
-       },
-       handleClose(key, keyPath) {
-         console.log(key, keyPath);
-       }
-     }
 
+export default {
+  name: 'Navi',
+  methods: {
+    handleOpen(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleClose(key, keyPath) {
+        console.log(key, keyPath);
+      },
+      handleSelect(key, keyPath) {
+        console.log(keyPath);
+        
+        switch (key) {
+          case '1-1':
+            this.$router.push('/dwxx');
+            
+            break;
+          case '1-2':
+            this.$router.push('/cplx')
+            
+            break;
+          case '1-3':
+            this.$router.push('/jsxx')
+            
+            break;
+        }
+
+    }
+  }
 }
+
 </script>
 
 <style lang="stylus" scoped>
-  .el-menu
-    position absolute
-    width 4rem
-    top 0
-    bottom 0
   .navibar
     float left
+    .title
+      font-size .44rem
+      text-align center
+      color #fff
+      padding .4rem .4rem
+      line-height .66rem
+    .el-menu
+      position absolute
+      width 4rem
+      top 0
+      bottom 0
     
     
 </style>
