@@ -83,7 +83,6 @@ export default {
 
 <style lang="stylus" scoped>
   .navibar
-    float left
     .title
       font-size .44rem
       text-align center

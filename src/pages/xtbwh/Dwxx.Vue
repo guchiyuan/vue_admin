@@ -11,9 +11,8 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  .dwxx
-    position absolute
-    left 4rem
+
+
 
 </style>
 

@@ -12,8 +12,8 @@ export default {
 
 <style lang="stylus" scoped>
   .jsxx
-    position absolute
-    left 4rem
+    background #666
+    height 100%
 
 </style>
 

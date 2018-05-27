@@ -11,9 +11,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-  .cplx
-    position absolute
-    left 4rem
+
 
 </style>
 
