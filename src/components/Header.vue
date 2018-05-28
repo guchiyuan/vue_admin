@@ -1,8 +1,13 @@
 <template>
   <div class="header">
-    <div class="userTitle">
-      欢迎您，管理员
-    </div>
+    <el-dropdown>
+      <i class="el-icon-setting"></i>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item>个人信息</el-dropdown-item>
+        <el-dropdown-item>退出登录</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
+    <span class="userTitle">管理员</span>
   </div>
 </template>
 
@@ -18,12 +23,13 @@ export default {
     position fixed
     left 200px
     right 0
+    height 1.2rem
     background #eee
+    text-align right
+    line-height 1.2rem
+    padding 0 .4rem
     .userTitle
-      text-align right 
       font-size .32rem
-      padding .44rem .44rem
-
 </style>
 
 
