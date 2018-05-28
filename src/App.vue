@@ -33,7 +33,6 @@ export default {
     padding 0 0
   .el-main
     padding 0 0
-    margin-left 200px
     // position fixed
     // top 60px
     // bottom 0
