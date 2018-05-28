@@ -18,10 +18,9 @@ export default {
     position fixed
     left 200px
     right 0
-    height 100%
     background #eee
     .userTitle
-      float right 
+      text-align right 
       font-size .32rem
       padding .44rem .44rem
 
