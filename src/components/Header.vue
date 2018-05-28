@@ -1,10 +1,10 @@
 <template>
   <div class="header">
-    <el-dropdown>
+    <el-dropdown trigger="click" @command="handleCommand">
       <i class="el-icon-setting"></i>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item>个人信息</el-dropdown-item>
-        <el-dropdown-item>退出登录</el-dropdown-item>
+        <el-dropdown-item command="userInfo">个人信息</el-dropdown-item>
+        <el-dropdown-item command="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
     <span class="userTitle">管理员</span>
@@ -14,7 +14,11 @@
 
 <script>
 export default {
-    
+  methods:{
+    handleCommand (command) {
+      alert(command);
+    }
+  }
 }
 </script>
 
