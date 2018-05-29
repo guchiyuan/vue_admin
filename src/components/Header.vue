@@ -24,7 +24,7 @@ export default {
 
 <style lang="stylus" scoped>
   .header
-    position fixed
+    position absolute
     left 200px
     right 0
     height 1.2rem

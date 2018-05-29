@@ -1,6 +1,6 @@
 <template>
 <div class="navibar">
-  <el-menu default-active="" class="el-menu-vertical-demo" @select="handleSelect" @open="handleOpen" @close="handleClose" background-color="#545c64"
+  <el-menu unique-opened default-active="" class="el-menu-vertical-demo" @select="handleSelect" @open="handleOpen" @close="handleClose" background-color="#545c64"
     text-color="#fff" active-text-color="#ffd04b">
     <div class="title">
       南京国图<br>授权管理系统      

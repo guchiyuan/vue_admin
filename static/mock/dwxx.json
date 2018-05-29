@@ -2,27 +2,35 @@
   "code":"0000",
   "data":[{
     "dwdm":"00001",
-    "dwmc":"自然资源部1"
+    "dwmc":"自然资源部1",
+    "editable":false
   },{
     "dwdm":"00002",
-    "dwmc":"自然资源部2"
+    "dwmc":"自然资源部2",
+    "editable":false
   },{
     "dwdm":"00003",
-    "dwmc":"自然资源部3"
+    "dwmc":"自然资源部3",
+    "editable":false
   },{
     "dwdm":"00004",
-    "dwmc":"自然资源部4"
+    "dwmc":"自然资源部4",
+    "editable":false
   },{
     "dwdm":"00005",
-    "dwmc":"自然资源部5"
+    "dwmc":"自然资源部5",
+    "editable":false
   },{
     "dwdm":"00006",
-    "dwmc":"自然资源部6"
+    "dwmc":"自然资源部6",
+    "editable":false
   },{
     "dwdm":"00007",
-    "dwmc":"自然资源部7"
+    "dwmc":"自然资源部7",
+    "editable":false
   },{
     "dwdm":"00008",
-    "dwmc":"自然资源部8"
+    "dwmc":"自然资源部8",
+    "editable":false
   }]  
 }
