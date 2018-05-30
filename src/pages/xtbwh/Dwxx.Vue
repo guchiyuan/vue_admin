@@ -112,7 +112,10 @@ export default {
       
     },
     handleClickRow () {
-       
+        // this.$message({
+        //       message: '警告哦，这是一条警告消息',
+        //       type: 'warning'
+        //     });
     },
     handleBlur () {
         this.tableData.map(function(item){  
@@ -123,19 +126,28 @@ export default {
       this.editable = !this.editable
     },
     handleAddDwxx (){
-      this.currentPage = Math.floor(this.total/this.pageSize) + 1;
+      console.log(this.tablePage);
+      if(this.tablePage[this.tablePage.length - 1].dwdm === ''){
+        this.$message({
+              message: '请确认新插入数据完全',
+              type: 'warning'
+            });
+      } else {
+        this.currentPage = Math.floor(this.total/this.pageSize) + 1;
         this.tablePage.map(function(item){  
           item.editable = false
         });
-      this.tablePage.push({"dwdm":"","dwmc":"","editable":true});
+        this.tablePage.push({"dwdm":"","dwmc":"","editable":true});
+      }
+      
+     
       
 
-      if (this.tablePage.length > this.pageSize){
-        this.currentPage = this.currentPage + 1;
-        //重新再读一次数据
-      }
-      // this.addDwxxFormVisible = false;
-
+      // if (this.tablePage.length > this.pageSize){
+      //   //重新再读一次数据        
+      //   this.getDwxx();
+      //   this.currentPage = this.currentPage + 1;
+      // }
     },
     rowStyle(row) {
       return 'color:green'
