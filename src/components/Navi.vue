@@ -1,6 +1,6 @@
 <template>
 <div class="navibar">
-  <el-menu unique-opened default-active="" class="el-menu-vertical-demo" @select="handleSelect" @open="handleOpen" @close="handleClose" background-color="#545c64"
+  <el-menu unique-opened default-active="$route.path" class="el-menu-vertical-demo" @select="handleSelect" @open="handleOpen" @close="handleClose" background-color="#545c64"
     text-color="#fff" active-text-color="#ffd04b">
     <div class="title">
       南京国图<br>授权管理系统      
@@ -12,9 +12,9 @@
         <span>系统表维护</span>
       </template>
 
-      <el-menu-item index="1-1">单位信息表</el-menu-item>
-      <el-menu-item index="1-2">产品类型表</el-menu-item>
-      <el-menu-item index="1-3">角色信息表</el-menu-item>
+      <el-menu-item index="/dwxx">单位信息表</el-menu-item>
+      <el-menu-item index="/cplx">产品类型表</el-menu-item>
+      <el-menu-item index="/jsxx">角色信息表</el-menu-item>
     </el-submenu>
 
      <el-submenu index="2">
@@ -58,22 +58,9 @@ export default {
         console.log(key, keyPath);
       },
       handleSelect(key, keyPath) {
-        console.log(keyPath);
         
-        switch (key) {
-          case '1-1':
-            this.$router.push('/dwxx');
-            
-            break;
-          case '1-2':
-            this.$router.push('/cplx')
-            
-            break;
-          case '1-3':
-            this.$router.push('/jsxx')
-            
-            break;
-        }
+        console.log(keyPath);
+        this.$router.push(key);
 
     }
   }

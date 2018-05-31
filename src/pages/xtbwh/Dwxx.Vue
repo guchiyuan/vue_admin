@@ -2,8 +2,19 @@
   <div class="dwxx">
     <!--工具条-->
     <div class="toolbar-top">
-      <span>单位信息表</span>
-      <el-button class="tool-btn" type="primary" icon="el-icon-plus" @click="handleAddDwxx" circle></el-button>
+      <!-- <span>单位信息表</span> -->
+      <el-form :inline="true" :model="filters">
+				<el-form-item>
+					<el-input v-model="filters.name" placeholder="单位名称"></el-input>
+				</el-form-item>
+				<el-form-item>
+					<el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
+				</el-form-item>
+        <el-form-item>
+					<el-button type="primary" @click="handleAddDwxx" icon="el-icon-plus" circle></el-button>
+				</el-form-item>
+			</el-form>
+   
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
     <!-- :highlight-current-row="editable" -->
@@ -11,6 +22,7 @@
               border :max-height="height" @row-dblclick="handleDbclickRow" 
               @row-click ="handleClickRow" 
               :header-row-style="rowStyle"
+              @selection-change="selsChange"
               >
       <el-table-column type="selection" width="50">
 			</el-table-column>
@@ -62,7 +74,7 @@
     <!--工具条-->
 		<el-col :span="24" class="toolbar-bottom">
       <!-- @click="batchRemove" :disabled="this.sels.length===0" -->
-			<el-button type="danger" >批量删除</el-button>
+			<el-button plain type="danger" :disabled="this.sels.length===0" icon="el-icon-delete">批量删除</el-button>
       <el-pagination
         background
         layout="prev, pager, next"
@@ -85,12 +97,17 @@ export default {
   data() {
     return {
       pageSize: Math.floor((window.innerHeight - 230)/53),
+      // pageSize: 20,
       currentPage:1,
       tableData: [],
       total: 0,
       listLoading: false,
-      // unediting:true,
-      // editing:false
+      sels: [],//列表选中列
+      filters: {
+					name: ''
+        },
+      filterData:[],
+      tableDataBak:[]
     }
   },
   computed:{
@@ -103,6 +120,37 @@ export default {
 
   },
   methods:{
+    getFilterDataSucc(res) {
+      this.listLoading = false;      
+      res = res.data;
+      if (res.code === '0000' && res.data) {
+        this.tableData = res.data;
+        this.total = res.data.length;
+      }
+      this.filterData = [];
+
+      if (this.filters.name !== '') {
+         this.tableData.map((item) => {
+
+          if (item.dwmc.indexOf(this.filters.name) !== -1) {
+            this.filterData.push(item);
+          }
+        });
+        console.log(this.filterData);
+        this.tableData = this.filterData;
+        this.total = this.tableData.length;
+      } 
+
+    },
+
+
+    getFilterData (){
+      this.listLoading = true;      
+      
+      axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
+      
+    },
+
     handleCurrentChange(curr) {
       console.log(this.tablePage);
       for (let i = 0; i < this.tablePage.length; i++) {
@@ -113,9 +161,6 @@ export default {
       }
 
       this.currentPage = curr;
-      
-      
-
     },
 
     getDwxx () {
@@ -220,26 +265,32 @@ export default {
         });
     },
 
+    selsChange (sels){
+      this.sels = sels;
+      console.log(sels);
+      
+    },
+
     rowStyle(row) {
       return 'color:green'
     }
   },
   mounted () {
-    this.getDwxx()
+      this.getDwxx() 
+    
   }
 }
 </script>
 
 <style lang="stylus" scoped>
 .dwxx
+  padding .2rem
   .toolbar-top
-    padding .36rem 0
+    .el-form
+      height .8rem
     span
       font-size .44rem
       margin-left .2rem
-    .tool-btn
-      float right
-      margin 0 .2rem
   .el-table
     margin-top .2rem
     width 100%
