@@ -32,13 +32,13 @@ export default {
   .el-header
     padding 0 0
   .el-main
-    overflow hidden
+    // overflow hidden
     padding 0 0
-    // position fixed
-    // top 60px
-    // bottom 0
-    // left 200px
-    // right 0
+    position absolute
+    top 60px
+    bottom 0
+    left 200px
+    right 0
 
 </style>
 
