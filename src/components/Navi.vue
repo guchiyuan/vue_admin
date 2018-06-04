@@ -35,7 +35,7 @@
         <span>登记信息管理</span>
       </template>
 
-      <el-menu-item index="3-1">登记信息录入</el-menu-item>
+      <el-menu-item index="/djxx">登记信息录入</el-menu-item>
      
     </el-submenu>
     
