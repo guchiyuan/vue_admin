@@ -1,36 +1,52 @@
 {
   "code":"0000",
   "data":[{
-    "dwdm":"00001",
-    "dwmc":"自然资源部1",
+    "index":"0001",
+    "dwdm":"320000",
+    "dwmc":"江苏省",
+    "xzqjb":"1",
     "editable":false
   },{
-    "dwdm":"00002",
-    "dwmc":"自然资源部2",
+    "index":"0002",
+    "dwdm":"320100",
+    "dwmc":"南京市",
+    "xzqjb":"2",
     "editable":false
   },{
-    "dwdm":"00003",
-    "dwmc":"自然资源部3",
+    "index":"0003",
+    "dwdm":"320104",
+    "dwmc":"鼓楼区",
+    "xzqjb":"3",
     "editable":false
   },{
-    "dwdm":"00004",
-    "dwmc":"自然资源部4",
+    "index":"0004",
+    "dwdm":"320106",
+    "dwmc":"秦淮区",
+    "xzqjb":"3",
     "editable":false
   },{
-    "dwdm":"00005",
-    "dwmc":"自然资源部5",
+    "index":"0005",
+    "dwdm":"320500",
+    "dwmc":"苏州市",
+    "xzqjb":"2",
     "editable":false
   },{
-    "dwdm":"00006",
-    "dwmc":"自然资源部6",
+    "index":"0006",
+    "dwdm":"320508",
+    "dwmc":"姑苏区",
+    "xzqjb":"3",
     "editable":false
   },{
-    "dwdm":"00007",
-    "dwmc":"自然资源部7",
+    "index":"0007",
+    "dwdm":"320506",
+    "dwmc":"吴中区",
+    "xzqjb":"3",
     "editable":false
   },{
-    "dwdm":"00008",
-    "dwmc":"自然资源部8",
+    "index":"0008",
+    "dwdm":"320505",
+    "dwmc":"虎丘区",
+    "xzqjb":"3",
     "editable":false
   }]  
 }
