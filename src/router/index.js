@@ -4,6 +4,7 @@ import Home from '@/pages/home/Home'
 import Dwxx from '@/pages/xtbwh/Dwxx'
 import Cplx from '@/pages/xtbwh/Cplx'
 import Jsxx from '@/pages/xtbwh/Jsxx'
+import Jscy from '@/pages/jscygl/Jscy'
 
 Vue.use(Router)
 
@@ -28,6 +29,26 @@ export default new Router({
       path: '/jsxx',
       name: 'Jsxx',
       component: Jsxx
+    },
+    {
+      path: '/admin_sq',
+      name: 'Jscy',
+      component: Jscy
+    },
+    {
+      path: '/check_sq',
+      name: 'Jscy',
+      component: Jscy
+    },
+    {
+      path: '/register_sq',
+      name: 'Jscy',
+      component: Jscy
+    },
+    {
+      path: '/create_sq',
+      name: 'Jscy',
+      component: Jscy
     }
   ]
 })
