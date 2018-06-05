@@ -5,13 +5,13 @@
       <!-- <span>单位信息表</span> -->
       <el-form :inline="true" :model="filters">
         <el-form-item>
-          <el-input v-model="filters.name" placeholder="单位名称"></el-input>
+          <el-input v-model="filters.name" placeholder="单位名称" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleAddDwxx" icon="el-icon-plus" circle></el-button>
+          <el-button type="primary" @click="handleAdd" icon="el-icon-plus" circle></el-button>
         </el-form-item>
       </el-form>
 
@@ -24,36 +24,102 @@
       </el-table-column>
       <el-table-column prop="dwdm" label="单位代码" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.dwdm" placeholder="请输入内容" @change="handleEdit(scope.$index, scope.row)"
-            @blur="handleBlur">
-          </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.dwdm}}</span>
+          <span>{{scope.row.dwdm}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="dwmc" label="单位名称" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.dwmc" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
-            @blur="handleBlur">
-          </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.dwmc}}</span>
+          <span>{{scope.row.dwmc}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="xzqjb" label="行政区级别" sortable>
+      <el-table-column prop="xmddm" label="项目点代码" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.xzqjb" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
-            @blur="handleBlur">
-          </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.xzqjb}}</span>
+          <span>{{scope.row.xmddm}}</span>
         </template>
       </el-table-column>
+
+      <el-table-column prop="xmdmc" label="项目点名称" sortable>
+        <template slot-scope="scope">
+          <span>{{scope.row.xmdmc}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="cpdm" label="产品代码" sortable>
+        <template slot-scope="scope">
+          <span>{{scope.row.cpdm}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="sfjmg" label="加密狗" sortable
+        :formatter="formatterSfjmg">
+        <!-- <template slot-scope="scope">
+          <span v-if="!scope.row.editable">{{scope.row.sfjmg}}</span>
+        </template> -->
+      </el-table-column>
+
+      <el-table-column prop="sfsq" label="是否授权" sortable
+      :formatter="formatterSfsq">
+        <!-- <template slot-scope="scope">        
+          <span>{{scope.row.sfsq}}</span>
+        </template> -->
+      </el-table-column>
+
+      <el-table-column prop="jzsj" label="截止时间" sortable>
+        <template slot-scope="scope">
+          <span>{{scope.row.jzsj}}</span>
+        </template>
+      </el-table-column>
+
+      <!-- <el-table-column prop="csr" label="初审人" sortable>
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.csr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+            @blur="handleBlur">
+          </el-input>
+          <span v-if="!scope.row.editable">{{scope.row.csr}}</span>
+        </template>
+      </el-table-column> -->
+
+      <!-- <el-table-column prop="fsr" label="复审人" sortable>
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.fsr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+            @blur="handleBlur">
+          </el-input>
+          <span v-if="!scope.row.editable">{{scope.row.fsr}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="sqshr" label="授权审核人" sortable>
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.sqshr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+            @blur="handleBlur">
+          </el-input>
+          <span v-if="!scope.row.editable">{{scope.row.sqshr}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="lrr" label="录入人" sortable>
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.lrr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+            @blur="handleBlur">
+          </el-input>
+          <span v-if="!scope.row.editable">{{scope.row.lrr}}</span>
+        </template>
+      </el-table-column> -->
+
+      <!-- <el-table-column prop="bz" label="备注" sortable>
+        <template slot-scope="scope">
+          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.bz" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+            @blur="handleBlur">
+          </el-input>
+          <span v-if="!scope.row.editable">{{scope.row.bz}}</span>
+        </template>
+      </el-table-column> -->
 
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button v-show="!scope.row.editable" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button v-show="scope.row.editable" size="mini" type="primary" @click="handleSave(scope.$index, scope.row)">保存</el-button>
-          <el-button v-show="scope.row.editable" size="mini" @click="handleCancel(scope.$index, scope.row)">取消</el-button>
-          <el-button v-show="!scope.row.editable" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -69,25 +135,297 @@
     </el-col>
 
     <!--编辑界面-->
-    <!-- <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
+    <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false"
+      top="1vh">
       <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-        <el-form-item label="单位代码" prop="dwdm">
-          <el-input v-model="editForm.dwdm" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="单位代码" prop="dwdm">
+               <el-autocomplete
+                class="inline-input"
+                v-model="editForm.dwdm"
+                :fetch-suggestions="queryXzqdm"
+                placeholder="请输入内容"
+                @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="editForm.dwdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单位名称" prop="dwmc">
+              <el-autocomplete
+                class="inline-input"
+                v-model="editForm.dwmc"
+                :fetch-suggestions="queryXzqmc"
+                placeholder="请输入内容"
+                @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="editForm.dwmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="单位名称" prop="dwmc">
-          <el-input v-model="editForm.dwmc" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="项目点代码" prop="xmddm">
+              <el-autocomplete
+                class="inline-input"
+                v-model="editForm.xmddm"
+                :fetch-suggestions="queryXzqdm"
+                placeholder="请输入内容"
+                @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="editForm.xmddm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="项目点名称" prop="xmdmc">
+              <el-autocomplete
+                class="inline-input"
+                v-model="editForm.xmdmc"
+                :fetch-suggestions="queryXzqmc"
+                placeholder="请输入内容"
+                @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="editForm.xmdmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="初审人" prop="csr">
+              <el-input  v-model="editForm.csr" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="复审人" prop="fsr">
+              <el-input v-model="editForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="授权审核人" prop="sqshr">
+              <el-input v-model="editForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="录入人" prop="lrr">
+              <el-input v-model="editForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="产品代码" prop="cpdm">
+              <el-autocomplete
+                class="inline-input"
+                v-model="editForm.cpdm"
+                :fetch-suggestions="queryCpdm"
+                placeholder="请输入内容"
+                @select="handleSelectXzqdm"
+                >
+              </el-autocomplete>
+              <!-- <el-input v-model="editForm.cpdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="加密狗" prop="sfjmg">
+              <el-input v-model="editForm.sfjmg" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+          </el-row>
+
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="是否授权" prop="sfsq">
+              <el-input v-model="editForm.sfsq" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="截止时间" prop="jzsj">
+            <el-date-picker
+              v-model="editForm.jzsj"
+              type="date"
+              placeholder="选择日期">
+            </el-date-picker>
+            <!-- <el-input v-model="editForm.jzsj" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+          </el-form-item>
+          </el-col>
+        </el-row>
+
+         
+
+          <el-form-item label="备注" prop="bz">
+            <el-input type="textarea" v-model="editForm.bz" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+          </el-form-item>
+
+
+
+
         
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="editFormVisible = false">取消</el-button>
         <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
 
 
 
+    <!--新增界面-->
+    <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false"
+      top="1vh">
+      <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="单位代码" prop="dwdm">
+               <el-autocomplete
+                class="inline-input"
+                v-model="addForm.dwdm"
+                :fetch-suggestions="queryXzqdm"
+                placeholder="请输入内容"
+                @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="addForm.dwdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="单位名称" prop="dwmc">
+              <el-autocomplete
+              class="inline-input"
+              v-model="addForm.dwmc"
+              :fetch-suggestions="queryXzqmc"
+              placeholder="请输入内容"
+              @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="addForm.dwmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="项目点代码" prop="xmddm">
+              <el-autocomplete
+              class="inline-input"
+              v-model="addForm.xmddm"
+              :fetch-suggestions="queryXzqdm"
+              placeholder="请输入内容"
+              @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="addForm.xmddm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="项目点名称" prop="xmdmc">
+              <el-autocomplete
+              class="inline-input"
+              v-model="addForm.xmdmc"
+              :fetch-suggestions="queryXzqmc"
+              placeholder="请输入内容"
+              @select="handleSelectXzqdm"
+              >
+              </el-autocomplete>
+              <!-- <el-input v-model="addForm.xmdmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="初审人" prop="csr">
+              <el-input v-model="addForm.csr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="复审人" prop="fsr">
+              <el-input v-model="addForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="授权审核人" prop="sqshr">
+              <el-input v-model="addForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="录入人" prop="lrr">
+              <el-input v-model="addForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="产品代码" prop="cpdm">
+              <el-autocomplete
+                class="inline-input"
+                v-model="addForm.cpdm"
+                :fetch-suggestions="queryCpdm"
+                placeholder="请输入内容"
+                @select="handleSelectXzqdm"
+                >
+              </el-autocomplete>
+              <!-- <el-input v-model="addForm.cpdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="加密狗" prop="sfjmg">
+              <el-input v-model="addForm.sfjmg" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+
+          </el-row>
+
+
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+           <el-form-item label="是否授权" prop="sfsq">
+              <el-input v-model="addForm.sfsq" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="截止时间" prop="jzsj">
+              <el-date-picker
+                v-model="addForm.jzsj"
+                type="date"
+                placeholder="选择日期">
+              </el-date-picker>
+              <!-- <el-input v-model="addForm.jzsj" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item>
+          </el-col>
+        </el-row>
+
+          
+
+          <el-form-item label="备注" prop="bz">
+            <el-input type="textarea" v-model="addForm.bz" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+          </el-form-item>
+
+
+
+
+        
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.native="addFormVisible = false">取消</el-button>
+        <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
@@ -99,50 +437,99 @@ export default {
   name: 'Dwxx',
   data() {
     return {
-      pageSize: Math.floor((window.innerHeight - 230)/53),
+      pageSize: Math.floor((window.innerHeight - 230) / 53),
       // pageSize: 20,
-      currentPage:1,
+      currentPage: 1,
       tableData: [],
       total: 0,
       listLoading: false,
-      sels: [],//列表选中列
+      sels: [], //列表选中列
       filters: {
-					name: ''
-        },
-      filterData:[],
-      // editFormVisible: false,//编辑界面是否显示
-      // editLoading: false,
-      // editFormRules: {
-      //   dwdm: [{
-      //     required: true,
-      //     message: '请输入单位代码',
-      //     trigger: 'blur'
-      //   }],
-      //   dwmc: [{
-      //     required: true,
-      //     message: '请输入单位名称',
-      //     trigger: 'blur'
-      //   }]
-      // },
-      // //编辑界面数据
-      // editForm: {
-      //   dwdm:'',
-      //   dwmc:''
-      // }
-    } 
+        name: ''
+      },
+      filterData: [],
+      editFormVisible: false, //编辑界面是否显示
+      editLoading: false,
+      editFormRules: {
+        dwdm: [{
+          required: true,
+          message: '请输入单位代码',
+          trigger: 'change'
+        }],
+        dwmc: [{
+          required: true,
+          message: '请输入单位名称',
+          trigger: 'change'
+        }]
+      },
+      //编辑界面数据
+      editForm: {
+        dwdm: '',
+        dwmc: '',
+        xmddm: '',
+        xmdmc: '',
+        cpdm: '',
+        sfjmg: '',
+        sfsq: '',
+        jzsj: '',
+        csr: '',
+        fsr: '',
+        sqshr: '',
+        lrr: '',
+        bz: ''
+      },
+
+      addFormVisible: false, //编辑界面是否显示
+      addLoading: false,
+      addFormRules: {
+        dwdm: [{
+          required: true,
+          message: '请输入单位代码',
+          trigger: 'change'
+        }],
+        dwmc: [{
+          required: true,
+          message: '请输入单位名称',
+          trigger: 'change'
+        }]
+      },
+      //编辑界面数据
+      addForm: {
+        dwdm: '',
+        dwmc: '',
+        xmddm: '',
+        xmdmc: '',
+        cpdm: '',
+        sfjmg: '',
+        sfsq: '',
+        jzsj: '',
+        csr: '',
+        fsr: '',
+        sqshr: '',
+        lrr: '',
+        bz: ''
+      },
+
+      //附带输入建议的input
+      xzqdms: [],
+      xzqmcs: [],
+      cpdms:  []
+
+    }
   },
-  computed:{
-    tablePage () {
+  computed: {
+    tablePage() {
       return this.tableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
     },
-    height () {
-      return (this.pageSize + 1) *59
+    height() {
+      return (this.pageSize + 1) * 59
     }
 
+
   },
-  methods:{
+  methods: {
     getFilterDataSucc(res) {
-      this.listLoading = false;      
+      this.listLoading = false;
       res = res.data;
       if (res.code === '0000' && res.data) {
         this.tableData = res.data;
@@ -151,19 +538,19 @@ export default {
       this.filterData = [];
 
       console.log(this.tableData);
-      
 
-      if (this.filters.name !== '') {    
-          this.tableData.map((item) => {
-            if (item.dwmc.indexOf(this.filters.name) !== -1) {
-              this.filterData.push(item);         
+
+      if (this.filters.name !== '') {
+        this.tableData.map((item) => {
+          if (item.dwmc.indexOf(this.filters.name) !== -1) {
+            this.filterData.push(item);
           }
         });
 
-      this.filterData.map((item) => {
-        this.tableData = [];
-        this.tableData.push(item);
-      });
+        this.filterData.map((item) => {
+          this.tableData = [];
+          this.tableData.push(item);
+        });
 
         console.log(this.filterData);
         // this.tableData = this.filterData;
@@ -171,17 +558,17 @@ export default {
         // this.tableData = this.filterData.slice(0,this.filterData.length);
         this.total = this.tableData.length;
         console.log(this.tableData);
-        
-      } 
+
+      }
 
     },
 
 
-    getFilterData (){
-      this.listLoading = true;      
-      
+    getFilterData() {
+      this.listLoading = true;
+
       axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
-      
+
     },
 
     handleCurrentChange(curr) {
@@ -190,20 +577,20 @@ export default {
         let item = this.tablePage[i];
         if (item.editable) {
           item.editable = false;
-        } 
+        }
       }
 
       this.currentPage = curr;
       console.log(this.tableData);
-      
+
     },
 
-    getDwxx () {
+    getDjxx() {
       this.listLoading = true;
-      axios.get('/api/dwxx.json')
-      .then(this.getDwxxSucc)
+      axios.get('/api/djxx.json')
+        .then(this.getDjxxSucc)
     },
-    getDwxxSucc (res) {
+    getDjxxSucc(res) {
       this.listLoading = false;
       console.log(res);
       res = res.data;
@@ -216,40 +603,27 @@ export default {
       console.log(index);
       console.log(row);
     },
-    handleDbclickRow (row) {
+    handleDbclickRow(row) {
       // this.tableData.map(function(item){  
       //   item.editable = false
       // });
       // row.editable = true;
       // console.log(row.editable);
-      
+
     },
-    handleClickRow () {
-      
+    handleClickRow() {
+
     },
-    handleBlur () {
-        // this.tableData.map(function(item){  
-        // item.editable = false
+    handleBlur() {
+      // this.tableData.map(function(item){  
+      // item.editable = false
       // });
     },
-    handleEditBtn (){
+    handleEditBtn() {
       this.editable = !this.editable
     },
-    handleAddDwxx (){
-      console.log(this.tablePage);
-      if(this.tablePage[this.tablePage.length - 1].dwdm === ''){
-        this.$message({
-              message: '亲，您还有新数据没填写完整！',
-              type: 'warning'
-            });
-      } else {
-        this.currentPage = Math.floor(this.total/this.pageSize) + 1;
-        this.tablePage.map((item) => {  
-          item.editable = false
-        });
-        this.tablePage.push({"dwdm":"","dwmc":"","editable":true});
-      }
-      
+    handleAdd() {
+      this.addFormVisible = true;
     },
     handleEdit(index, row) {
       row.editable = !row.editable;
@@ -261,86 +635,169 @@ export default {
       console.log(row);
 
       this.editFormVisible = true;
-			this.editForm = Object.assign({}, row);
+      this.editForm = Object.assign({}, row);
 
     },
 
-    handleCancel(index,row){
-      this.getDwxx ();
+    handleCancel(index, row) {
+      this.getDjxx();
       row.editable = !row.editable;
       this.$message({
-          type: 'info',
-          message: '已取消编辑'
-        });         
-       
+        type: 'info',
+        message: '已取消编辑'
+      });
+
     },
 
-     handleSave(index,row){
+    handleSave(index, row) {
       row.editable = !row.editable;
       //调用接口后回调消息
       this.$message({
-          showClose: true,
-          message: '保存成功！',
-          type: 'success'
-        });
+        showClose: true,
+        message: '保存成功！',
+        type: 'success'
+      });
     },
 
-    handleDelete (index, row){
-     this.$confirm('是否删除此条数据?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          //调用接口
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+    handleDelete(index, row) {
+      this.$confirm('是否删除此条数据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //调用接口
+        this.$message({
+          type: 'success',
+          message: '删除成功!'
         });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
 
-    selsChange (sels){
+    selsChange(sels) {
       this.sels = sels;
       console.log(sels);
-      
+
     },
 
     //编辑
-			editSubmit: function () {
-				this.$refs.editForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.editLoading = true;
-							// let para = Object.assign({}, this.editForm);
-							// editUser(para).then((res) => {
-								this.editLoading = false;
-								this.$message({
-									message: '提交成功',
-									type: 'success'
-								});
-								this.$refs['editForm'].resetFields();
-								this.editFormVisible = false;
-								this.getDwxx();
-							// });
-						});
-					}
-				});
-			},
+    editSubmit: function () {
+      this.$refs.editForm.validate((valid) => {
+        if (valid) {
+          this.$confirm('确认提交吗？', '提示', {}).then(() => {
+            this.editLoading = true;
+            // let para = Object.assign({}, this.editForm);
+            // editUser(para).then((res) => {
+            this.editLoading = false;
+            this.$message({
+              message: '提交成功',
+              type: 'success'
+            });
+            this.$refs['editForm'].resetFields();
+            this.editFormVisible = false;
+            this.getDjxx();
+            // });
+          });
+        }
+      });
+    },
+
+    formatterSfjmg(row, column) {
+      switch (row.sfjmg) {
+        case "0":
+          return "不使用"
+          break;
+        case "1":
+          return "使用"
+          break;
+        default:
+          break;
+      }
+    },
+
+    formatterSfsq(row, column) {
+      switch (row.sfsq) {
+        case "0":
+          return "否"
+          break;
+        case "1":
+          return "是"
+          break;
+        default:
+          break;
+      }
+    },
+
+    //附带输入建议的input
+    queryXzqdm(queryString, cb) {
+      var xzqdms = this.xzqdms;
+      var results = queryString ? xzqdms.filter(this.createFilter(queryString)) : xzqdms;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    queryXzqmc(queryString, cb) {
+      var xzqmcs = this.xzqmcs;
+      var results = queryString ? xzqmcs.filter(this.createFilter(queryString)) : xzqmcs;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+
+    queryCpdm(queryString, cb) {
+      var cpdms = this.cpdms;
+      var results = queryString ? cpdms.filter(this.createFilter(queryString)) : cpdms;
+      // 调用 callback 返回建议列表的数据
+      cb(results);
+    },
+    createFilter(queryString) {
+      return (suggestion) => {
+        return (suggestion.value.toLowerCase().indexOf(queryString.toLowerCase()) === 0);
+      };
+    },
+
+
+    loadSuggestions() {
+      axios.get('/api/suggestions.json').then(this.getSuggestionsSucc)
+    },
+
+    getSuggestionsSucc(res) {
+      console.log(res);
+      res = res.data;
+      if (res.code === '0000' && res.data.xzqdm) {
+        this.xzqdms = res.data.xzqdm;
+      }
+
+      if (res.code === '0000' && res.data.xzqmc) {
+        this.xzqmcs = res.data.xzqmc;
+      }
+
+
+      if (res.code === '0000' && res.data.cpdm) {
+        this.cpdms = res.data.cpdm;
+      }
+    },
+
+
+    //----------------------------------------------------------------------------------------//
+
+    handleSelectXzqdm() {
+
+    },
 
     rowStyle(row) {
       return 'color:green'
     }
   },
-  mounted () {
-      this.getDwxx() 
-    
+  mounted() {
+    this.getDjxx();
+    this.loadSuggestions();
+
   }
 }
+
 </script>
 
 <style lang="stylus" scoped>
@@ -355,6 +812,8 @@ export default {
   .el-table
     margin-top .2rem
     width 100%
+    .el-button
+      margin-left .2rem
     // .el-input
     //   display none
     // .current-row
@@ -367,6 +826,13 @@ export default {
     padding .1rem
     .el-pagination
       float right 
+>>>.el-dialog
+  .el-form-item__label
+    font-size 13px
+  .el-input
+    width 90%
+  .el-autocomplete
+    width 100%
 // .editable
 //   span
 //     display none

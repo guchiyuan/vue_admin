@@ -5,7 +5,7 @@
       <!-- <span>单位信息表</span> -->
       <el-form :inline="true" :model="filters">
         <el-form-item>
-          <el-input v-model="filters.name" placeholder="角色成员"></el-input>
+          <el-input v-model="filters.name" placeholder="角色成员" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
@@ -92,55 +92,58 @@
     </el-col>
 
     <!--编辑界面-->
-    <el-dialog title="编辑角色成员" :visible.sync="editFormVisible" :close-on-click-modal="false"
-                top="1vh">
+    <el-dialog title="编辑角色成员" :visible.sync="editFormVisible" :close-on-click-modal="false" top="1vh">
       <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
 
-      <!-- <el-row type="flex" class="row-bg">
-        <el-col :span="12">
-          <el-form-item label="角色成员" prop="jscy">
-            <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="角色成员" prop="jscy">
-            <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row> -->
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="角色成员" prop="jscy">
+              <el-input v-model="editForm.jscy" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="角色代码" prop="jsdm">
+              <el-input v-model="editForm.jsdm" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="角色成员" prop="jscy">
-          <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="所属部门" prop="ssbm">
+              <el-input v-model="editForm.ssbm" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="项目组" prop="ssxmz">
+              <el-input v-model="editForm.ssxmz" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="角色代码" prop="jsdm">
-          <el-input v-model="editForm.jsdm" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="所属部门" prop="ssbm">
-          <el-input v-model="editForm.ssbm" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="项目组" prop="ssxmz">
-          <el-input v-model="editForm.ssxmz" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="联系电话" prop="lxdh">
-          <el-input v-model="editForm.lxdh" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="微信号" prop="wechat">
-          <el-input v-model="editForm.wechat" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="备注" prop="bz">
-          <el-input v-model="editForm.bz" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="联系电话" prop="lxdh">
+              <el-input v-model="editForm.lxdh" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="微信号" prop="wechat">
+              <el-input v-model="editForm.wechat" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
         <el-form-item label="密码" prop="pwd">
-          <el-input v-model="editForm.pwd" auto-complete="off"></el-input>
+          <el-input v-model="editForm.pwd" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
         </el-form-item>
-        
+
+
+        <el-form-item label="备注" prop="bz">
+          <el-input type="textarea" v-model="editForm.bz" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+        </el-form-item>
+
+
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click.native="editFormVisible = false">取消</el-button>
@@ -149,54 +152,66 @@
     </el-dialog>
 
 
+
      <!--新增界面-->
     <el-dialog title="新增角色成员" :visible.sync="addFormVisible" :close-on-click-modal="false"
                 top="1vh">
-      <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+      <el-form :model="editForm" label-width="80px" :rules="addFormRules" ref="editForm">
 
-      <!-- <el-row type="flex" class="row-bg">
-        <el-col :span="12">
-          <el-form-item label="角色成员" prop="jscy">
-            <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-col>
-        <el-col :span="12">
-          <el-form-item label="角色成员" prop="jscy">
-            <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
-          </el-form-item>
-        </el-col>
-      </el-row> -->
+       <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="角色成员" prop="jscy">
+              <el-input v-model="addForm.jscy" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="密码" prop="pwd">
+              <el-input v-model="addForm.pwd" auto-complete="off" clearable placeholder="请输入内容"></el-input>
+              </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="角色成员" prop="jscy">
-          <el-input v-model="addForm.jscy" auto-complete="off"></el-input>
-        </el-form-item>
+         <el-form-item label="角色代码" prop="jsdm">
+              <el-select style="width:100%" v-model="addForm.jsdm" multiple placeholder="请选择">
+                <el-option
+                  v-for="item in optionsJsdm"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-input v-model="addForm.jsdm" auto-complete="off" clearable  placeholder="请输入内容"></el-input> -->
+            </el-form-item>
 
-        <el-form-item label="角色代码" prop="jsdm">
-          <el-input v-model="addForm.jsdm" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="所属部门" prop="ssbm">
+              <el-input v-model="addForm.ssbm" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="项目组" prop="ssxmz">
+              <el-input v-model="addForm.ssxmz" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="所属部门" prop="ssbm">
-          <el-input v-model="addForm.ssbm" auto-complete="off"></el-input>
-        </el-form-item>
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="联系电话" prop="lxdh">
+              <el-input v-model="addForm.lxdh" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="微信号" prop="wechat">
+              <el-input v-model="addForm.wechat" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
 
-        <el-form-item label="项目组" prop="ssxmz">
-          <el-input v-model="addForm.ssxmz" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="联系电话" prop="lxdh">
-          <el-input v-model="addForm.lxdh" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="微信号" prop="wechat">
-          <el-input v-model="addForm.wechat" auto-complete="off"></el-input>
-        </el-form-item>
 
         <el-form-item label="备注" prop="bz">
-          <el-input v-model="addForm.bz" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="密码" prop="pwd">
-          <el-input v-model="addForm.pwd" auto-complete="off"></el-input>
+          <el-input type="textarea" v-model="addForm.bz" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
         </el-form-item>
         
       </el-form>
@@ -283,7 +298,18 @@ export default {
         wechat:'',
         bz:'',
         pwd:'',
-      }
+      },
+
+      optionsJsdm:[{
+          value: '1',
+          label: '管理员'
+        }, {
+          value: '2',
+          label: '双皮奶'
+        }, {
+          value: '3',
+          label: '蚵仔煎'
+        }],
     } 
   },
   computed:{
@@ -388,7 +414,7 @@ export default {
       this.editable = !this.editable
     },
     handleAdd (){
-      this.editFormVisible = true;      
+      this.addFormVisible = true;      
     },
     handleEdit(index, row) {
       row.editable = !row.editable;
@@ -470,6 +496,11 @@ export default {
         }
       });
     },
+
+    addSubmit() {
+      console.log(this.addForm);
+      
+    },
     
     filterHandler(value, row, column) {
       const property = column['property'];
@@ -495,6 +526,8 @@ export default {
       }
 
     },
+
+
 
     rowStyle(row) {
       return 'color:green'
