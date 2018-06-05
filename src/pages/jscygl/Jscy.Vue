@@ -5,13 +5,13 @@
       <!-- <span>单位信息表</span> -->
       <el-form :inline="true" :model="filters">
         <el-form-item>
-          <el-input v-model="filters.name" placeholder="单位名称"></el-input>
+          <el-input v-model="filters.name" placeholder="角色成员"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" @click="handleAddDwxx" icon="el-icon-plus" circle></el-button>
+          <el-button type="primary" @click="handleAdd" icon="el-icon-plus" circle></el-button>
         </el-form-item>
       </el-form>
 
@@ -26,6 +26,14 @@
         <template slot-scope="scope">
           <span>{{scope.row.jscy}}</span>
         </template>
+      </el-table-column>
+      <el-table-column prop="jsdm" label="角色代码" sortable
+        :formatter="formatterJsdm"
+       :filters="filterJsdm"
+       :filter-method="filterHandler">
+        <!-- <template slot-scope="scope">
+          <span>{{scope.row.jsdm}}</span>
+        </template> -->
       </el-table-column>
       <el-table-column prop="ssbm" label="所属部门" sortable>
         <template slot-scope="scope">
@@ -84,7 +92,7 @@
     </el-col>
 
     <!--编辑界面-->
-    <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false"
+    <el-dialog title="编辑角色成员" :visible.sync="editFormVisible" :close-on-click-modal="false"
                 top="1vh">
       <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
 
@@ -103,6 +111,10 @@
 
         <el-form-item label="角色成员" prop="jscy">
           <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="角色代码" prop="jsdm">
+          <el-input v-model="editForm.jsdm" auto-complete="off"></el-input>
         </el-form-item>
 
         <el-form-item label="所属部门" prop="ssbm">
@@ -137,6 +149,64 @@
     </el-dialog>
 
 
+     <!--新增界面-->
+    <el-dialog title="新增角色成员" :visible.sync="addFormVisible" :close-on-click-modal="false"
+                top="1vh">
+      <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+
+      <!-- <el-row type="flex" class="row-bg">
+        <el-col :span="12">
+          <el-form-item label="角色成员" prop="jscy">
+            <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+        <el-col :span="12">
+          <el-form-item label="角色成员" prop="jscy">
+            <el-input v-model="editForm.jscy" auto-complete="off"></el-input>
+          </el-form-item>
+        </el-col>
+      </el-row> -->
+
+        <el-form-item label="角色成员" prop="jscy">
+          <el-input v-model="addForm.jscy" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="角色代码" prop="jsdm">
+          <el-input v-model="addForm.jsdm" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="所属部门" prop="ssbm">
+          <el-input v-model="addForm.ssbm" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="项目组" prop="ssxmz">
+          <el-input v-model="addForm.ssxmz" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="联系电话" prop="lxdh">
+          <el-input v-model="addForm.lxdh" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="微信号" prop="wechat">
+          <el-input v-model="addForm.wechat" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="备注" prop="bz">
+          <el-input v-model="addForm.bz" auto-complete="off"></el-input>
+        </el-form-item>
+
+        <el-form-item label="密码" prop="pwd">
+          <el-input v-model="addForm.pwd" auto-complete="off"></el-input>
+        </el-form-item>
+        
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click.native="addFormVisible = false">取消</el-button>
+        <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+      </div>
+    </el-dialog>
+
+
 
   </div>
 </template>
@@ -159,6 +229,9 @@ export default {
 					name: ''
         },
       filterData:[],
+      filterJsdm:[{value:'1',text:'管理员'},{value:'2',text:'审查人员'},{value:'3',text:'登记人员'},{value:'4',text:'制作人员'}],
+
+
       editFormVisible: false,//编辑界面是否显示
       editLoading: false,
       editFormRules: {
@@ -176,6 +249,34 @@ export default {
       //编辑界面数据
       editForm: {
         jscy:'',
+        jsdm:'',
+        ssbm:'',
+        ssxmz:'',
+        lxdh:'',
+        wechat:'',
+        bz:'',
+        pwd:'',
+      },
+
+      //新增界面
+      addFormVisible: false,//编辑界面是否显示
+      addLoading: false,
+      addFormRules: {
+        jscy: [{
+          required: true,
+          message: '请输入姓名',
+          trigger: 'blur'
+        }],
+        lxdh: [{
+          required: true,
+          message: '请输入手机号',
+          trigger: 'blur'
+        }]
+      },
+      //新增界面数据
+      addForm: {
+        jscy:'',
+        jsdm:'',
         ssbm:'',
         ssxmz:'',
         lxdh:'',
@@ -195,48 +296,43 @@ export default {
 
   },
   methods:{
-    // getFilterDataSucc(res) {
-    //   this.listLoading = false;      
-    //   res = res.data;
-    //   if (res.code === '0000' && res.data) {
-    //     this.tableData = res.data;
-    //     this.total = res.data.length;
-    //   }
-    //   this.filterData = [];
+    getFilterDataSucc(res) {
+      this.listLoading = false;      
+      res = res.data;
+      if (res.code === '0000' && res.data) {
+        this.tableData = res.data;
+        this.total = res.data.length;
+      }
+      this.filterData = [];
 
-    //   console.log(this.tableData);
+      console.log(this.tableData);
       
 
-    //   if (this.filters.name !== '') {    
-    //       this.tableData.map((item) => {
-    //         if (item.dwmc.indexOf(this.filters.name) !== -1) {
-    //           this.filterData.push(item);         
-    //       }
-    //     });
+      if (this.filters.name !== '') {    
+          this.tableData.map((item) => {
+            if (item.jscy.indexOf(this.filters.name) !== -1) {
+              this.filterData.push(item);         
+          }
+        });
 
-    //   this.filterData.map((item) => {
-    //     this.tableData = [];
-    //     this.tableData.push(item);
-    //   });
-
-    //     console.log(this.filterData);
-    //     // this.tableData = this.filterData;
-    //     console.log(this.filterData.length);
-    //     // this.tableData = this.filterData.slice(0,this.filterData.length);
-    //     this.total = this.tableData.length;
-    //     console.log(this.tableData);
+        console.log(this.filterData);
+        // this.tableData = this.filterData;
+        console.log(this.filterData.length);
+        this.tableData = this.filterData.slice(0,this.filterData.length);
+        this.total = this.tableData.length;
+        console.log(this.tableData);
         
-    //   } 
+      } 
 
-    // },
+    },
 
 
-    // getFilterData (){
-    //   this.listLoading = true;      
+    getFilterData (){
+      this.listLoading = true;      
+      this.currentPage = 1;
+      axios.get('/api/jscy.json').then(this.getFilterDataSucc);
       
-    //   axios.get('/api/jscy.json').then(this.getFilterDataSucc);
-      
-    // },
+    },
 
     handleCurrentChange(curr) {
       console.log(this.tablePage);
@@ -252,65 +348,19 @@ export default {
       
     },
 
+
     getJscy(type) {
       this.listLoading = true;
-      switch (type) {
-        case 1:
-          axios.get('/api/jscy.json')
-            .then(this.getJscyAdminSucc)
-          break;
-        case 2:
-          axios.get('/api/jscy.json')
-            .then(this.getJscyCheckSucc)
-          break;
-        case 3:
-          axios.get('/api/jscy.json')
-            .then(this.getJscyRegisterSucc)
-          break;
-        case 4:
-          axios.get('/api/jscy.json')
-            .then(this.getJscyCreateSucc)
-          break;
-
-        default:
-          break;
-      }
-
+      axios.get('/api/jscy.json')
+        .then(this.getJscySucc)
     },
 
-    getJscyAdminSucc (res) {
+    getJscySucc (res) {
       this.listLoading = false;
       console.log(res);
       res = res.data;
       if (res.code === '0000' && res.data) {
-        this.tableData = res.data.admin;
-        this.total = res.data.length;
-      }
-    },
-    getJscyCheckSucc (res) {
-      this.listLoading = false;
-      console.log(res);
-      res = res.data;
-      if (res.code === '0000' && res.data) {
-        this.tableData = res.data.check;
-        this.total = res.data.length;
-      }
-    },
-    getJscyRegisterSucc (res) {
-      this.listLoading = false;
-      console.log(res);
-      res = res.data;
-      if (res.code === '0000' && res.data) {
-        this.tableData = res.data.register;
-        this.total = res.data.length;
-      }
-    },
-    getJscyCreateSucc (res) {
-      this.listLoading = false;
-      console.log(res);
-      res = res.data;
-      if (res.code === '0000' && res.data) {
-        this.tableData = res.data.create;
+        this.tableData = res.data;
         this.total = res.data.length;
       }
     },
@@ -337,21 +387,8 @@ export default {
     handleEditBtn (){
       this.editable = !this.editable
     },
-    handleAddDwxx (){
-      console.log(this.tablePage);
-      if(this.tablePage[this.tablePage.length - 1].dwdm === ''){
-        this.$message({
-              message: '亲，您还有新数据没填写完整！',
-              type: 'warning'
-            });
-      } else {
-        this.currentPage = Math.floor(this.total/this.pageSize) + 1;
-        this.tablePage.map((item) => {  
-          item.editable = false
-        });
-        this.tablePage.push({"dwdm":"","dwmc":"","editable":true});
-      }
-      
+    handleAdd (){
+      this.editFormVisible = true;      
     },
     handleEdit(index, row) {
       row.editable = !row.editable;
@@ -412,84 +449,87 @@ export default {
       
     },
 
-    //编辑
-			editSubmit: function () {
-				this.$refs.editForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.editLoading = true;
-							// let para = Object.assign({}, this.editForm);
-							// editUser(para).then((res) => {
-								this.editLoading = false;
-								this.$message({
-									message: '提交成功',
-									type: 'success'
-								});
-								this.$refs['editForm'].resetFields();
-								this.editFormVisible = false;
-								this.getJscy();
-							// });
-						});
-					}
-				});
-			},
+  //编辑
+    editSubmit: function () {
+      this.$refs.editForm.validate((valid) => {
+        if (valid) {
+          this.$confirm('确认提交吗？', '提示', {}).then(() => {
+            this.editLoading = true;
+            // let para = Object.assign({}, this.editForm);
+            // editUser(para).then((res) => {
+              this.editLoading = false;
+              this.$message({
+                message: '提交成功',
+                type: 'success'
+              });
+              this.$refs['editForm'].resetFields();
+              this.editFormVisible = false;
+              this.getJscy();
+            // });
+          });
+        }
+      });
+    },
+    
+    filterHandler(value, row, column) {
+      const property = column['property'];
+      return row[property] === value;
+    },
+
+    formatterJsdm(row,column) {
+      switch (row.jsdm) {
+        case "1":
+          return "管理员"
+          break;
+        case "2":
+          return "审核人员"
+          break;
+        case "3":
+          return "登记人员"
+          break;
+        case "4":
+          return "制作人员"
+          break;
+        default:
+          break;
+      }
+
+    },
 
     rowStyle(row) {
       return 'color:green'
     }
   },
   mounted() {
-      switch (this.$route.path) {
-        case "/admin_sq":
-          this.getJscy(1);
-
-          break;
-        case "/check_sq":
-          this.getJscy(2);
-
-          break;
-        case "/register_sq":
-          this.getJscy(3);
-
-          break;
-        case "/create_sq":
-          this.getJscy(4);
-
-          break;
-
-        default:
-          break;
-      }
-
-    
+      this.getJscy();
   },
-  watch: {
-    "$route.path": function (currentPath) {
-      console.log(currentPath);
+  // watch: {
+  //   "$route.path": function (currentPath) {
+  //     console.log(currentPath);
 
-      switch (currentPath) {
-        case "/admin_sq":
-          this.getJscy(1);
+  //     switch (currentPath) {
+  //       case "/admin_sq":
+  //         this.getJscy(1);
 
-          break;
-        case "/check_sq":
-          this.getJscy(2);
+  //         break;
+  //       case "/check_sq":
+  //         this.getJscy(2);
 
-          break;
-        case "/register_sq":
-          this.getJscy(3);
+  //         break;
+  //       case "/register_sq":
+  //         this.getJscy(3);
 
-          break;
-        case "/create_sq":
-          this.getJscy(4);
+  //         break;
+  //       case "/create_sq":
+  //         this.getJscy(4);
 
-          break;
+  //         break;
 
-        default:
-          break;
-      }
-    }
-  }
+  //       default:
+  //         break;
+  //     }
+  //   }
+  // }
 
 }
 </script>
