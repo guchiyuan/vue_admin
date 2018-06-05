@@ -11,7 +11,7 @@
 					<el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
 				</el-form-item>
         <el-form-item>
-					<el-button type="primary" @click="handleAddDwxx" icon="el-icon-plus" circle></el-button>
+					<el-button type="primary" @click="handleAdd" icon="el-icon-plus" circle></el-button>
 				</el-form-item>
 			</el-form>
    
@@ -148,13 +148,8 @@ export default {
           }
         });
 
-      this.filterData.map((item) => {
-        this.tableData = [];
-        this.tableData.push(item);
-      });
-
         console.log(this.filterData);
-        // this.tableData = this.filterData;
+        this.tableData = this.filterData;
         console.log(this.filterData.length);
         // this.tableData = this.filterData.slice(0,this.filterData.length);
         this.total = this.tableData.length;
@@ -167,7 +162,8 @@ export default {
 
     getFilterData (){
       this.listLoading = true;      
-      
+      //解决除首页外搜索问题 
+      this.currentPage = 1;
       axios.get('/api/cplx.json').then(this.getFilterDataSucc);
       
     },
@@ -223,7 +219,7 @@ export default {
     handleEditBtn (){
       this.editable = !this.editable
     },
-    handleAddDwxx (){
+    handleAdd (){
       console.log(this.tablePage);
       if(this.tablePage[this.tablePage.length - 1].cpdm === ''){
         this.$message({

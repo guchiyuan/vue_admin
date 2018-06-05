@@ -32,22 +32,7 @@ export default new Router({
       component: Jsxx
     },
     {
-      path: '/admin_sq',
-      name: 'Jscy',
-      component: Jscy
-    },
-    {
-      path: '/check_sq',
-      name: 'Jscy',
-      component: Jscy
-    },
-    {
-      path: '/register_sq',
-      name: 'Jscy',
-      component: Jscy
-    },
-    {
-      path: '/create_sq',
+      path: '/jscyxx',
       name: 'Jscy',
       component: Jscy
     },

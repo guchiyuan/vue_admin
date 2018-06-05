@@ -22,11 +22,11 @@
         <i class="el-icon-menu"></i>
         <span>角色成员管理</span>
       </template>
-
-      <el-menu-item index="/admin_sq">管理员</el-menu-item>
+      <el-menu-item index="/jscyxx">角色成员信息表</el-menu-item>
+      <!-- <el-menu-item index="/admin_sq">管理员</el-menu-item>
       <el-menu-item index="/check_sq">用户认证审核</el-menu-item>
       <el-menu-item index="/register_sq">授权登记录入</el-menu-item>
-      <el-menu-item index="/create_sq">授权制作</el-menu-item>
+      <el-menu-item index="/create_sq">授权制作</el-menu-item> -->
     </el-submenu>
 
      <el-submenu index="3">
