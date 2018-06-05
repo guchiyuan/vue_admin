@@ -148,13 +148,8 @@ export default {
           }
         });
 
-      this.filterData.map((item) => {
-        this.tableData = [];
-        this.tableData.push(item);
-      });
-
         console.log(this.filterData);
-        // this.tableData = this.filterData;
+        this.tableData = this.filterData;
         console.log(this.filterData.length);
         // this.tableData = this.filterData.slice(0,this.filterData.length);
         this.total = this.tableData.length;
@@ -167,7 +162,8 @@ export default {
 
     getFilterData (){
       this.listLoading = true;      
-      
+      //解决除首页外搜索问题 
+      this.currentPage = 1;
       axios.get('/api/cplx.json').then(this.getFilterDataSucc);
       
     },

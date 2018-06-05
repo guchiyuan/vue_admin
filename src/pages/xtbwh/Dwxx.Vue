@@ -150,7 +150,7 @@ export default {
       }
       this.filterData = [];
 
-      console.log(this.tableData);
+      // console.log(this.tableData);
       
 
       if (this.filters.name !== '') {    
@@ -160,13 +160,13 @@ export default {
           }
         });
 
-      this.filterData.map((item) => {
-        this.tableData = [];
-        this.tableData.push(item);
-      });
+      // this.filterData.map((item) => {
+      //   this.tableData = [];
+      //   this.tableData.push(item);
+      // });
 
         console.log(this.filterData);
-        // this.tableData = this.filterData;
+        this.tableData = this.filterData;
         console.log(this.filterData.length);
         // this.tableData = this.filterData.slice(0,this.filterData.length);
         this.total = this.tableData.length;
@@ -178,8 +178,9 @@ export default {
 
 
     getFilterData (){
-      this.listLoading = true;      
-      
+      this.listLoading = true;
+      //解决除首页外搜索问题 
+      this.currentPage = 1;
       axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
       
     },
@@ -310,27 +311,27 @@ export default {
       
     },
 
-    //编辑
-			editSubmit: function () {
-				this.$refs.editForm.validate((valid) => {
-					if (valid) {
-						this.$confirm('确认提交吗？', '提示', {}).then(() => {
-							this.editLoading = true;
-							// let para = Object.assign({}, this.editForm);
-							// editUser(para).then((res) => {
-								this.editLoading = false;
-								this.$message({
-									message: '提交成功',
-									type: 'success'
-								});
-								this.$refs['editForm'].resetFields();
-								this.editFormVisible = false;
-								this.getDwxx();
-							// });
-						});
-					}
-				});
-			},
+    // //编辑
+		// 	editSubmit: function () {
+		// 		this.$refs.editForm.validate((valid) => {
+		// 			if (valid) {
+		// 				this.$confirm('确认提交吗？', '提示', {}).then(() => {
+		// 					this.editLoading = true;
+		// 					// let para = Object.assign({}, this.editForm);
+		// 					// editUser(para).then((res) => {
+		// 						this.editLoading = false;
+		// 						this.$message({
+		// 							message: '提交成功',
+		// 							type: 'success'
+		// 						});
+		// 						this.$refs['editForm'].resetFields();
+		// 						this.editFormVisible = false;
+		// 						this.getDwxx();
+		// 					// });
+		// 				});
+		// 			}
+		// 		});
+		// 	},
 
     rowStyle(row) {
       return 'color:green'

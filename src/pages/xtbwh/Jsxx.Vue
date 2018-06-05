@@ -26,7 +26,7 @@
               >
       <el-table-column type="selection" width="50">
 			</el-table-column>
-      <el-table-column prop="jsdm" label="产品代码" sortable>
+      <el-table-column prop="jsdm" label="角色代码" sortable>
         <template slot-scope="scope">
           <el-input v-if="scope.row.editable"  size="small" v-model="scope.row.jsdm" 
                     placeholder="请输入内容" 
@@ -36,7 +36,7 @@
           <span v-if="!scope.row.editable">{{scope.row.jsdm}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="jsmc" label="产品名称" sortable>
+      <el-table-column prop="jsmc" label="角色名称" sortable>
         <template slot-scope="scope">
           <el-input v-if="scope.row.editable" size="small" v-model="scope.row.jsmc" placeholder="请输入内容" 
                     @change="handleChange(scope.$index, scope.row)" 
@@ -138,13 +138,8 @@ export default {
           }
         });
 
-      this.filterData.map((item) => {
-        this.tableData = [];
-        this.tableData.push(item);
-      });
-
         console.log(this.filterData);
-        // this.tableData = this.filterData;
+        this.tableData = this.filterData;
         console.log(this.filterData.length);
         // this.tableData = this.filterData.slice(0,this.filterData.length);
         this.total = this.tableData.length;
@@ -157,7 +152,8 @@ export default {
 
     getFilterData (){
       this.listLoading = true;      
-      
+      //解决除首页外搜索问题 
+      this.currentPage = 1;
       axios.get('/api/jsxx.json').then(this.getFilterDataSucc);
       
     },
