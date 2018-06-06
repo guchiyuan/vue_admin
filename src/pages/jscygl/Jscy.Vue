@@ -71,7 +71,7 @@
         </template>
       </el-table-column>
 
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -102,11 +102,26 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="角色代码" prop="jsdm">
-              <el-input v-model="editForm.jsdm" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            <el-form-item label="密码" prop="pwd">
+              <el-input v-model="editForm.pwd" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
+
+        <el-form-item v-show="uneditingJsdm" label="角色代码" prop="jsdm">
+          <el-input @focus="handleFocusJsdm" v-model="editForm.jsdm" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+        </el-form-item>
+        <el-form-item v-show="editingJsdm" label="角色代码" prop="jsdm">
+          <el-select style="width:100%" v-model="addForm.jsdm" multiple placeholder="请选择">
+            <el-option
+              v-for="item in optionsJsdm"
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <!-- <el-input v-model="addForm.jsdm" auto-complete="off" clearable  placeholder="请输入内容"></el-input> -->
+        </el-form-item>
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
@@ -133,10 +148,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <el-form-item label="密码" prop="pwd">
-          <el-input v-model="editForm.pwd" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
-        </el-form-item>
 
 
         <el-form-item label="备注" prop="bz">
@@ -272,6 +283,9 @@ export default {
         bz:'',
         pwd:'',
       },
+
+      editingJsdm:false,
+      uneditingJsdm:true,
 
       //新增界面
       addFormVisible: false,//编辑界面是否显示
@@ -414,6 +428,7 @@ export default {
       this.editable = !this.editable
     },
     handleAdd (){
+      this.addForm.jsdm = '';
       this.addFormVisible = true;      
     },
     handleEdit(index, row) {
@@ -425,7 +440,11 @@ export default {
       console.log(index);
       console.log(row);
 
+
+      this.addForm.jsdm = ''; 
       this.editFormVisible = true;
+      this.editingJsdm = false;      
+      this.uneditingJsdm = true;      
 			this.editForm = Object.assign({}, row);
 
     },
@@ -478,6 +497,13 @@ export default {
   //编辑
     editSubmit: function () {
       this.$refs.editForm.validate((valid) => {
+        // console.log(this.editForm);
+        // let reqData = {
+        //   jscy:this.editForm.jscy,
+        //   jsdm:this.addForm.jsdm
+        // };
+        // console.log(reqData);
+        
         if (valid) {
           this.$confirm('确认提交吗？', '提示', {}).then(() => {
             this.editLoading = true;
@@ -525,6 +551,11 @@ export default {
           break;
       }
 
+    },
+
+    handleFocusJsdm() {
+      this.editingJsdm = true;
+      this.uneditingJsdm = false;
     },
 
 

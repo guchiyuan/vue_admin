@@ -116,7 +116,7 @@
         </template>
       </el-table-column> -->
 
-      <el-table-column label="操作">
+      <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -773,7 +773,6 @@ export default {
       if (res.code === '0000' && res.data.xzqmc) {
         this.xzqmcs = res.data.xzqmc;
       }
-
 
       if (res.code === '0000' && res.data.cpdm) {
         this.cpdms = res.data.cpdm;
