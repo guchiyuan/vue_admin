@@ -62,32 +62,13 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar-bottom">
       <!-- @click="batchRemove" :disabled="this.sels.length===0" -->
-      <el-button plain type="danger" :disabled="this.sels.length===0" icon="el-icon-delete">批量删除</el-button>
+      <el-button plain type="danger" :disabled="this.sels.length===0" icon="el-icon-delete" @click="handleBatchDelete">批量删除</el-button>
       <el-pagination background layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :current-page="currentPage"
         :total="total">
       </el-pagination>
     </el-col>
 
-    <!--编辑界面-->
-    <!-- <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false">
-      <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
-        <el-form-item label="单位代码" prop="dwdm">
-          <el-input v-model="editForm.dwdm" auto-complete="off"></el-input>
-        </el-form-item>
-
-        <el-form-item label="单位名称" prop="dwmc">
-          <el-input v-model="editForm.dwmc" auto-complete="off"></el-input>
-        </el-form-item>
-        
-      </el-form>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click.native="editFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
-      </div>
-    </el-dialog> -->
-
-
-
+  
   </div>
 </template>
 
@@ -110,25 +91,7 @@ export default {
 					name: ''
         },
       filterData:[],
-      // editFormVisible: false,//编辑界面是否显示
-      // editLoading: false,
-      // editFormRules: {
-      //   dwdm: [{
-      //     required: true,
-      //     message: '请输入单位代码',
-      //     trigger: 'blur'
-      //   }],
-      //   dwmc: [{
-      //     required: true,
-      //     message: '请输入单位名称',
-      //     trigger: 'blur'
-      //   }]
-      // },
-      // //编辑界面数据
-      // editForm: {
-      //   dwdm:'',
-      //   dwmc:''
-      // }
+
     } 
   },
   computed:{
@@ -159,11 +122,6 @@ export default {
               this.filterData.push(item);         
           }
         });
-
-      // this.filterData.map((item) => {
-      //   this.tableData = [];
-      //   this.tableData.push(item);
-      // });
 
         console.log(this.filterData);
         this.tableData = this.filterData;
@@ -218,20 +176,13 @@ export default {
       console.log(row);
     },
     handleDbclickRow (row) {
-      // this.tableData.map(function(item){  
-      //   item.editable = false
-      // });
-      // row.editable = true;
-      // console.log(row.editable);
-      
+    
     },
     handleClickRow () {
       
     },
     handleBlur () {
-        // this.tableData.map(function(item){  
-        // item.editable = false
-      // });
+      
     },
     handleEditBtn (){
       this.editable = !this.editable
@@ -278,6 +229,9 @@ export default {
 
      handleSave(index,row){
       row.editable = !row.editable;
+
+      console.log(row);
+      
       //调用接口后回调消息
       this.$message({
           showClose: true,
@@ -292,6 +246,8 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
+          console.log(row);
+          
           //调用接口
           this.$message({
             type: 'success',
@@ -311,27 +267,14 @@ export default {
       
     },
 
-    // //编辑
-		// 	editSubmit: function () {
-		// 		this.$refs.editForm.validate((valid) => {
-		// 			if (valid) {
-		// 				this.$confirm('确认提交吗？', '提示', {}).then(() => {
-		// 					this.editLoading = true;
-		// 					// let para = Object.assign({}, this.editForm);
-		// 					// editUser(para).then((res) => {
-		// 						this.editLoading = false;
-		// 						this.$message({
-		// 							message: '提交成功',
-		// 							type: 'success'
-		// 						});
-		// 						this.$refs['editForm'].resetFields();
-		// 						this.editFormVisible = false;
-		// 						this.getDwxx();
-		// 					// });
-		// 				});
-		// 			}
-		// 		});
-		// 	},
+    handleBatchDelete (){
+      let sels = this.sels;
+      let deleteIdx = [];
+      sels.map(function (item) {
+        deleteIdx.push(item.index)
+      });
+      console.log(deleteIdx);
+    },
 
     rowStyle(row) {
       return 'color:green'
