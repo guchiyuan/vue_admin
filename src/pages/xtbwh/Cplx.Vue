@@ -234,7 +234,9 @@ export default {
         this.tablePage.map((item) => {  
           item.editing = false
         });
+  
         this.tablePage.push({"cpdm":"","cpmc":"","sfwh":"","editing":true});
+            
       }
       
     },
@@ -280,6 +282,8 @@ export default {
                message: '新增成功！',
                type: 'success'
              });
+             this.getCpxx();
+             this.currentPage = 1;
            }).catch(() => {
              this.$message({
                showClose: true,

@@ -119,7 +119,7 @@
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row, tablePage)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -128,7 +128,7 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar-bottom">
       <!-- @click="batchRemove" :disabled="this.sels.length===0" -->
-      <el-button plain type="danger" :disabled="this.sels.length===0" icon="el-icon-delete">批量删除</el-button>
+      <el-button plain @click="batchDelete" type="danger" :disabled="this.sels.length===0" icon="el-icon-delete">批量删除</el-button>
       <el-pagination background layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :current-page="currentPage"
         :total="total">
       </el-pagination>
@@ -238,7 +238,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="加密狗" prop="sfjmg">
-              <el-input v-model="editForm.sfjmg" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+              <el-input v-model="editForm.sfjmg" auto-complete="off" clearable  placeholder="0：不使用，1：使用" ></el-input>
             </el-form-item>
           </el-col>
           </el-row>
@@ -247,7 +247,7 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="是否授权" prop="sfsq">
-              <el-input v-model="editForm.sfsq" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+              <el-input v-model="editForm.sfsq" auto-complete="off" clearable  placeholder="0：否，1：是" ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -385,7 +385,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="加密狗" prop="sfjmg">
-              <el-input v-model="addForm.sfjmg" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+              <el-input v-model="addForm.sfjmg" auto-complete="off" clearable  placeholder="0：不使用，1：使用" ></el-input>
             </el-form-item>
           </el-col>
 
@@ -395,7 +395,7 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
            <el-form-item label="是否授权" prop="sfsq">
-              <el-input v-model="addForm.sfsq" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+              <el-input v-model="addForm.sfsq" auto-complete="off" clearable  placeholder="0：否，1：是" ></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -432,6 +432,8 @@
 
 <script>
 import axios from 'axios'
+const ADDRESS_CPDJ = '/api/product/cpdj'
+const ADDRESS_SUGGESTIONS = '/api/suggestionscpdj'
 
 export default {
   name: 'Dwxx',
@@ -567,7 +569,8 @@ export default {
     getFilterData() {
       this.listLoading = true;
 
-      axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
+      // axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
+      axios.get(ADDRESS_CPDJ).then(this.getFilterDataSucc);
 
     },
 
@@ -587,7 +590,9 @@ export default {
 
     getDjxx() {
       this.listLoading = true;
-      axios.get('/api/djxx.json')
+      // axios.get('/api/djxx.json')
+      //   .then(this.getDjxxSucc)
+      axios.get(ADDRESS_CPDJ)
         .then(this.getDjxxSucc)
     },
     getDjxxSucc(res) {
@@ -649,26 +654,53 @@ export default {
 
     },
 
-    handleSave(index, row) {
-      row.editing = !row.editing;
-      //调用接口后回调消息
-      this.$message({
-        showClose: true,
-        message: '保存成功！',
-        type: 'success'
-      });
-    },
+    // handleSave(index, row) {
+    //   row.editing = !row.editing;
+    //   //调用接口后回调消息
+    //   this.$message({
+    //     showClose: true,
+    //     message: '保存成功！',
+    //     type: 'success'
+    //   });
+    // },
 
-    handleDelete(index, row) {
+   handleDelete(index, row, rows) {
       this.$confirm('是否删除此条数据?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
       }).then(() => {
         //调用接口
-        this.$message({
-          type: 'success',
-          message: '删除成功!'
+        let deleteIndex = [];
+        deleteIndex.push(row.index);
+        axios.post(ADDRESS_CPDJ, {
+          'index': deleteIndex,
+          'xw': '2'
+        }).then((res) => {
+          if (res.data.code === '0000') {
+            rows.splice(index, 1);
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          } else {
+            this.$message({
+              type: 'info',
+              message: res.data.msg
+            });
+          }
+          console.log(this.tablePage);
+          //当前页不存在数据时，定位到前一页
+          if (this.tablePage.length === 0) {
+            this.currentPage = this.currentPage - 1;
+          }
+          this.getDjxx();
+          
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '删除失败'
+          });
         });
       }).catch(() => {
         this.$message({
@@ -684,27 +716,174 @@ export default {
 
     },
 
-    //编辑
-    editSubmit: function () {
-      this.$refs.editForm.validate((valid) => {
-        if (valid) {
-          this.$confirm('确认提交吗？', '提示', {}).then(() => {
-            this.editLoading = true;
-            // let para = Object.assign({}, this.editForm);
-            // editUser(para).then((res) => {
-            this.editLoading = false;
+    batchDelete() {
+      this.$confirm('是否删除这些数据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let deleteIndex = [];
+        this.sels.map((sel) => {
+          deleteIndex.push(sel.index);
+        });
+        console.log(deleteIndex);
+        axios.post(ADDRESS_CPDJ, {
+          'index': deleteIndex,
+          'xw': '2'
+        }).then((res) => {
+          console.log(res);
+          
+          if (res.data.code === '0000') {
             this.$message({
-              message: '提交成功',
-              type: 'success'
+              type: 'success',
+              message: '删除成功!'
             });
-            this.$refs['editForm'].resetFields();
-            this.editFormVisible = false;
-            this.getDjxx();
-            // });
+          } else {
+            this.$message({
+              type: 'info',
+              message: res.data.msg
+            });
+          }
+          //当前页不存在数据时，定位到前一页
+          if (this.tablePage.length === 0) {
+            this.currentPage = this.currentPage - 1;
+          }
+          this.getDjxx();
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '删除失败'
           });
-        }
+        });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
       });
     },
+
+
+
+     addSubmit() {
+       this.$refs.addForm.validate((valid) => {
+         if (valid) {
+           this.$confirm('确认提交新增吗？', '提示', {}).then(() => {
+             this.addForm.xw = '1';
+             console.log(this.addForm);
+             axios.post(ADDRESS_CPDJ, {
+                 'xw': this.addForm.xw,
+                 'dwdm': this.addForm.dwdm,
+                 'dwmc': this.addForm.dwmc,
+                 'xmddm': this.addForm.xmddm,
+                 'xmdmc': this.addForm.xmdmc,
+                 'cpdm': this.addForm.cpdm,
+                 'sfjmg': this.addForm.sfjmg,
+                 'sfsq': this.addForm.sfsq,
+                 'jzsj': this.addForm.jzsj,
+                 'csr': this.addForm.csr,
+                 'fsr': this.addForm.fsr,
+                 'sqshr': this.addForm.sqshr,
+                 'lrr': this.addForm.lrr,
+                 'bz': this.addForm.bz
+               })
+               .then((res) => {
+                 console.log(res);
+                 if (res.data.code === '0000') {
+                   this.$message({
+                     showClose: true,
+                     message: '新增产品登记信息成功！',
+                     type: 'success'
+                   });
+                 } else {
+                   this.$message({
+                     showClose: true,
+                     message: res.data.msg,
+                     type: 'info'
+                   });
+                 }
+
+                 this.$refs['addForm'].resetFields();
+                 this.addFormVisible = false;
+                 this.currentPage = 1;
+                 this.getDjxx();
+
+               }).catch(() => {
+                 this.$message({
+                   showClose: true,
+                   message: '新增产品登记信息失败！',
+                   type: 'info'
+                 });
+               });
+           });
+         }
+       });
+
+     },
+
+
+
+
+    //编辑
+      editSubmit() {
+        this.$refs.editForm.validate((valid) => {
+          if (valid) {
+            this.$confirm('确认提交编辑吗？', '提示', {}).then(() => {
+              this.editForm.xw = '0';
+              console.log(this.addForm);
+
+              console.log(this.editForm);
+
+              axios.post(ADDRESS_CPDJ, {
+                  'xw': this.editForm.xw,
+                  'index': this.editForm.index,
+                  'dwdm': this.editForm.dwdm,
+                  'dwmc': this.editForm.dwmc,
+                  'xmddm': this.editForm.xmddm,
+                  'xmdmc': this.editForm.xmdmc,
+                  'cpdm': this.editForm.cpdm,
+                  'sfjmg': this.editForm.sfjmg,
+                  'sfsq': this.editForm.sfsq,
+                  'jzsj': this.editForm.jzsj,
+                  'csr': this.editForm.csr,
+                  'fsr': this.editForm.fsr,
+                  'sqshr': this.editForm.sqshr,
+                  'lrr': this.editForm.lrr,
+                  'bz': this.editForm.bz
+                })
+                .then((res) => {
+                  console.log(res);
+                  if (res.data.code === '0000') {
+                    this.$message({
+                      showClose: true,
+                      message: '编辑产品登记信息成功！',
+                      type: 'success'
+                    });
+                  } else {
+                    this.$message({
+                      showClose: true,
+                      message: res.data.msg,
+                      type: 'info'
+                    });
+                  }
+
+                  this.$refs['editForm'].resetFields();
+                  this.editFormVisible = false;
+                  this.getDjxx();
+
+                }).catch(() => {
+                  this.$message({
+                    showClose: true,
+                    message: '编辑产品登记信息失败！',
+                    type: 'info'
+                  });
+                });
+            });
+          }
+        });
+      },
+
 
     formatterSfjmg(row, column) {
       switch (row.sfjmg) {
@@ -760,7 +939,8 @@ export default {
 
 
     loadSuggestions() {
-      axios.get('/api/suggestions.json').then(this.getSuggestionsSucc)
+      // axios.get('/api/suggestions.json').then(this.getSuggestionsSucc)
+      axios.get(ADDRESS_SUGGESTIONS).then(this.getSuggestionsSucc)
     },
 
     getSuggestionsSucc(res) {
