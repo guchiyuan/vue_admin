@@ -17,7 +17,7 @@
 
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
-    <!-- :highlight-current-row="editable" -->
+    <!-- :highlight-current-row="editing" -->
     <el-table v-loading="listLoading" :data="tablePage" border :max-height="height" @row-dblclick="handleDbclickRow" @row-click="handleClickRow"
       :header-row-style="rowStyle" @selection-change="selsChange">
       <el-table-column type="selection" width="50">
@@ -75,8 +75,8 @@
         <template slot-scope="scope">
           <el-button size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
-          <!-- <el-button v-show="scope.row.editable" size="mini" type="primary" @click="handleSave(scope.$index, scope.row)">保存</el-button>
-          <el-button v-show="scope.row.editable" size="mini" @click="handleCancel(scope.$index, scope.row)">取消</el-button> -->
+          <!-- <el-button v-show="scope.row.editing" size="mini" type="primary" @click="handleSave(scope.$index, scope.row)">保存</el-button>
+          <el-button v-show="scope.row.editing" size="mini" @click="handleCancel(scope.$index, scope.row)">取消</el-button> -->
         </template>
       </el-table-column>
     </el-table>
@@ -112,7 +112,7 @@
           <el-input @focus="handleFocusJsdm" v-model="editForm.jsdm" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
         </el-form-item>
         <el-form-item v-show="editingJsdm" label="角色代码" prop="jsdm">
-          <el-select style="width:100%" v-model="addForm.jsdm" multiple placeholder="请选择">
+          <el-select style="width:100%" @focus="handleFocusJsdmSelect" v-model="addForm.jsdm" multiple placeholder="请选择">
             <el-option
               v-for="item in optionsJsdm"
               :key="item.value"
@@ -183,7 +183,7 @@
         </el-row>
 
          <el-form-item label="角色代码" prop="jsdm">
-              <el-select style="width:100%" v-model="addForm.jsdm" multiple placeholder="请选择">
+              <el-select style="width:100%" @focus="handleFocusJsdmSelect" v-model="addForm.jsdm" multiple placeholder="请选择">
                 <el-option
                   v-for="item in optionsJsdm"
                   :key="item.value"
@@ -275,7 +275,7 @@ export default {
       //编辑界面数据
       editForm: {
         jscy:'',
-        jsdm:'',
+        jsdm:[],
         ssbm:'',
         ssxmz:'',
         lxdh:'',
@@ -305,7 +305,7 @@ export default {
       //新增界面数据
       addForm: {
         jscy:'',
-        jsdm:'',
+        jsdm:[],
         ssbm:'',
         ssxmz:'',
         lxdh:'',
@@ -378,8 +378,8 @@ export default {
       console.log(this.tablePage);
       for (let i = 0; i < this.tablePage.length; i++) {
         let item = this.tablePage[i];
-        if (item.editable) {
-          item.editable = false;
+        if (item.editing) {
+          item.editing = false;
         } 
       }
 
@@ -410,10 +410,10 @@ export default {
     },
     handleDbclickRow (row) {
       // this.tableData.map(function(item){  
-      //   item.editable = false
+      //   item.editing = false
       // });
-      // row.editable = true;
-      // console.log(row.editable);
+      // row.editing = true;
+      // console.log(row.editing);
       
     },
     handleClickRow () {
@@ -421,22 +421,22 @@ export default {
     },
     handleBlur () {
         // this.tableData.map(function(item){  
-        // item.editable = false
+        // item.editing = false
       // });
     },
     handleEditBtn (){
-      this.editable = !this.editable
+      this.editing = !this.editing
     },
     handleAdd (){
       this.addForm.jsdm = '';
       this.addFormVisible = true;      
     },
     handleEdit(index, row) {
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.tablePage.map((item) => {
-        item.editable = false
+        item.editing = false
       });
-      row.editable = true;
+      row.editing = true;
       console.log(index);
       console.log(row);
 
@@ -451,7 +451,7 @@ export default {
 
     handleCancel(index,row){
       this.getJscy ();
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.$message({
           type: 'info',
           message: '已取消编辑'
@@ -460,7 +460,7 @@ export default {
     },
 
      handleSave(index,row){
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       //调用接口后回调消息
       this.$message({
           showClose: true,
@@ -558,6 +558,10 @@ export default {
       this.uneditingJsdm = false;
     },
 
+    handleFocusJsdmSelect(){
+      this.addForm.jsdm = [];
+    },
+
 
 
     rowStyle(row) {
@@ -624,7 +628,7 @@ export default {
     padding .1rem
     .el-pagination
       float right 
-// .editable
+// .editing
 //   span
 //     display none
 //   .el-input

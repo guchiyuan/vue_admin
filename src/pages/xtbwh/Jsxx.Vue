@@ -17,7 +17,7 @@
    
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
-    <!-- :highlight-current-row="editable" -->
+    <!-- :highlight-current-row="editing" -->
     <el-table v-loading="listLoading" :data="tablePage"  
               border :max-height="height" @row-dblclick="handleDbclickRow" 
               @row-click ="handleClickRow" 
@@ -28,41 +28,41 @@
 			</el-table-column>
       <el-table-column prop="jsdm" label="角色代码" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable"  size="small" v-model="scope.row.jsdm" 
+          <el-input v-if="scope.row.editing"  size="small" v-model="scope.row.jsdm" 
                     placeholder="请输入内容" 
                     @change="handleEdit(scope.$index, scope.row)"
                     @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.jsdm}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.jsdm}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="jsmc" label="角色名称" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.jsmc" placeholder="请输入内容" 
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.jsmc" placeholder="请输入内容" 
                     @change="handleChange(scope.$index, scope.row)" 
                     @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.jsmc}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.jsmc}}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
-            v-show="!scope.row.editable"
+            v-show="!scope.row.editing"
             size="mini"
             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button
-            v-show="scope.row.editable"
+            v-show="scope.row.editing"
             size="mini"
             type="primary"                        
             @click="handleSave(scope.$index, scope.row)">保存</el-button>
           <el-button
-            v-show="scope.row.editable"
+            v-show="scope.row.editing"
             size="mini"
             @click="handleCancel(scope.$index, scope.row)">取消</el-button>
           <el-button
-            v-show="!scope.row.editable"            
+            v-show="!scope.row.editing"            
             size="mini"
             type="danger"
             @click="handleDelete(scope.$index, scope.row)">删除</el-button>
@@ -91,6 +91,7 @@
 
 <script>
 import axios from 'axios'
+const ADDRESS_JSXX ='api/systable/jsxx'
 
 export default {
   name: 'Jsxx',
@@ -154,7 +155,8 @@ export default {
       this.listLoading = true;      
       //解决除首页外搜索问题 
       this.currentPage = 1;
-      axios.get('/api/jsxx.json').then(this.getFilterDataSucc);
+      // axios.get('/api/jsxx.json').then(this.getFilterDataSucc);
+      axios.get(ADDRESS_JSXX).then(this.getFilterDataSucc);
       
     },
 
@@ -162,8 +164,8 @@ export default {
       console.log(this.tablePage);
       for (let i = 0; i < this.tablePage.length; i++) {
         let item = this.tablePage[i];
-        if (item.editable) {
-          item.editable = false;
+        if (item.editing) {
+          item.editing = false;
         } 
       }
 
@@ -172,12 +174,14 @@ export default {
       
     },
 
-    getDwxx () {
+    getJsxx () {
       this.listLoading = true;
-      axios.get('/api/jsxx.json')
-      .then(this.getDwxxSucc)
+      // axios.get('/api/jsxx.json')
+      // .then(this.getJsxxSucc)
+      axios.get(ADDRESS_JSXX)
+      .then(this.getJsxxSucc)
     },
-    getDwxxSucc (res) {
+    getJsxxSucc (res) {
       this.listLoading = false;
       console.log(res);
       res = res.data;
@@ -192,10 +196,10 @@ export default {
     },
     handleDbclickRow (row) {
       // this.tableData.map(function(item){  
-      //   item.editable = false
+      //   item.editing = false
       // });
-      // row.editable = true;
-      // console.log(row.editable);
+      // row.editing = true;
+      // console.log(row.editing);
       
     },
     handleClickRow () {
@@ -203,11 +207,11 @@ export default {
     },
     handleBlur () {
         // this.tableData.map(function(item){  
-        // item.editable = false
+        // item.editing = false
       // });
     },
     handleEditBtn (){
-      this.editable = !this.editable
+      this.editing = !this.editing
     },
     handleAdd (){
       console.log(this.tablePage);
@@ -219,25 +223,25 @@ export default {
       } else {
         this.currentPage = Math.floor(this.total/this.pageSize) + 1;
         this.tablePage.map((item) => {  
-          item.editable = false
+          item.editing = false
         });
-        this.tablePage.push({"jsdm":"","jsmc":"","editable":true});
+        this.tablePage.push({"jsdm":"","jsmc":"","editing":true});
       }
       
     },
     handleEdit(index, row) {
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.tablePage.map((item) => {
-        item.editable = false
+        item.editing = false
       });
-      row.editable = true;
+      row.editing = true;
       console.log(index);
       console.log(row);
     },
 
     handleCancel(index,row){
-      this.getDwxx ();
-      row.editable = !row.editable;
+      this.getJsxx ();
+      row.editing = !row.editing;
       this.$message({
           type: 'info',
           message: '已取消编辑'
@@ -246,7 +250,7 @@ export default {
     },
 
      handleSave(index,row){
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       //调用接口后回调消息
       this.$message({
           showClose: true,
@@ -285,7 +289,7 @@ export default {
     }
   },
   mounted () {
-      this.getDwxx() 
+      this.getJsxx() 
     
   }
 }
@@ -315,7 +319,7 @@ export default {
     padding .1rem
     .el-pagination
       float right 
-// .editable
+// .editing
 //   span
 //     display none
 //   .el-input

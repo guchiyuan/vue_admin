@@ -17,7 +17,7 @@
 
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
-    <!-- :highlight-current-row="editable" -->
+    <!-- :highlight-current-row="editing" -->
     <el-table v-loading="listLoading" :data="tablePage" border :max-height="height" @row-dblclick="handleDbclickRow" @row-click="handleClickRow"
       :header-row-style="rowStyle" @selection-change="selsChange">
       <el-table-column type="selection" width="50">
@@ -54,7 +54,7 @@
       <el-table-column prop="sfjmg" label="加密狗" sortable
         :formatter="formatterSfjmg">
         <!-- <template slot-scope="scope">
-          <span v-if="!scope.row.editable">{{scope.row.sfjmg}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.sfjmg}}</span>
         </template> -->
       </el-table-column>
 
@@ -73,46 +73,46 @@
 
       <!-- <el-table-column prop="csr" label="初审人" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.csr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.csr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.csr}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.csr}}</span>
         </template>
       </el-table-column> -->
 
       <!-- <el-table-column prop="fsr" label="复审人" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.fsr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.fsr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.fsr}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.fsr}}</span>
         </template>
       </el-table-column>
 
       <el-table-column prop="sqshr" label="授权审核人" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.sqshr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.sqshr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.sqshr}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.sqshr}}</span>
         </template>
       </el-table-column>
 
       <el-table-column prop="lrr" label="录入人" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.lrr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.lrr" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.lrr}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.lrr}}</span>
         </template>
       </el-table-column> -->
 
       <!-- <el-table-column prop="bz" label="备注" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.bz" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.bz" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.bz}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.bz}}</span>
         </template>
       </el-table-column> -->
 
@@ -575,8 +575,8 @@ export default {
       console.log(this.tablePage);
       for (let i = 0; i < this.tablePage.length; i++) {
         let item = this.tablePage[i];
-        if (item.editable) {
-          item.editable = false;
+        if (item.editing) {
+          item.editing = false;
         }
       }
 
@@ -605,10 +605,10 @@ export default {
     },
     handleDbclickRow(row) {
       // this.tableData.map(function(item){  
-      //   item.editable = false
+      //   item.editing = false
       // });
-      // row.editable = true;
-      // console.log(row.editable);
+      // row.editing = true;
+      // console.log(row.editing);
 
     },
     handleClickRow() {
@@ -616,21 +616,21 @@ export default {
     },
     handleBlur() {
       // this.tableData.map(function(item){  
-      // item.editable = false
+      // item.editing = false
       // });
     },
     handleEditBtn() {
-      this.editable = !this.editable
+      this.editing = !this.editing
     },
     handleAdd() {
       this.addFormVisible = true;
     },
     handleEdit(index, row) {
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.tablePage.map((item) => {
-        item.editable = false
+        item.editing = false
       });
-      row.editable = true;
+      row.editing = true;
       console.log(index);
       console.log(row);
 
@@ -641,7 +641,7 @@ export default {
 
     handleCancel(index, row) {
       this.getDjxx();
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.$message({
         type: 'info',
         message: '已取消编辑'
@@ -650,7 +650,7 @@ export default {
     },
 
     handleSave(index, row) {
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       //调用接口后回调消息
       this.$message({
         showClose: true,
@@ -832,7 +832,7 @@ export default {
     width 90%
   .el-autocomplete
     width 100%
-// .editable
+// .editing
 //   span
 //     display none
 //   .el-input

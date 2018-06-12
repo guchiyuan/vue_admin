@@ -17,43 +17,43 @@
 
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
-    <!-- :highlight-current-row="editable" -->
+    <!-- :highlight-current-row="editing" -->
     <el-table v-loading="listLoading" :data="tablePage" border :max-height="height" @row-dblclick="handleDbclickRow" @row-click="handleClickRow"
       :header-row-style="rowStyle" @selection-change="selsChange">
       <el-table-column type="selection" width="50">
       </el-table-column>
       <el-table-column prop="dwdm" label="单位代码" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.dwdm" placeholder="请输入内容" @change="handleEdit(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.dwdm" placeholder="请输入内容" @change="handleEdit(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.dwdm}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.dwdm}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="dwmc" label="单位名称" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.dwmc" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.dwmc" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.dwmc}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.dwmc}}</span>
         </template>
       </el-table-column>
 
       <el-table-column prop="xzqjb" label="行政区级别" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.xzqjb" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.xzqjb" placeholder="请输入内容" @change="handleChange(scope.$index, scope.row)"
             @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.xzqjb}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.xzqjb}}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="操作">
         <template slot-scope="scope">
-          <el-button v-show="!scope.row.editable" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
-          <el-button v-show="scope.row.editable" size="mini" type="primary" @click="handleSave(scope.$index, scope.row)">保存</el-button>
-          <el-button v-show="scope.row.editable" size="mini" @click="handleCancel(scope.$index, scope.row)">取消</el-button>
-          <el-button v-show="!scope.row.editable" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button v-show="!scope.row.editing" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+          <el-button v-show="scope.row.editing" size="mini" type="primary" @click="handleSave(scope.$index, scope.row)">保存</el-button>
+          <el-button v-show="scope.row.editing" size="mini" @click="handleCancel(scope.$index, scope.row)">取消</el-button>
+          <el-button v-show="!scope.row.editing" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -75,6 +75,8 @@
 
 <script>
 import axios from 'axios'
+
+const ADDRESS_DWXX = 'api/systable/dwxx'
 
 export default {
   name: 'Dwxx',
@@ -139,7 +141,8 @@ export default {
       this.listLoading = true;
       //解决除首页外搜索问题 
       this.currentPage = 1;
-      axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
+      // axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
+      axios.get(ADDRESS_DWXX).then(this.getFilterDataSucc);
       
     },
 
@@ -147,8 +150,8 @@ export default {
       console.log(this.tablePage);
       for (let i = 0; i < this.tablePage.length; i++) {
         let item = this.tablePage[i];
-        if (item.editable) {
-          item.editable = false;
+        if (item.editing) {
+          item.editing = false;
         } 
       }
 
@@ -159,7 +162,9 @@ export default {
 
     getDwxx () {
       this.listLoading = true;
-      axios.get('/api/dwxx.json')
+      // axios.get('/api/dwxx.json')
+      // .then(this.getDwxxSucc)
+      axios.get(ADDRESS_DWXX)
       .then(this.getDwxxSucc)
     },
     getDwxxSucc (res) {
@@ -185,7 +190,7 @@ export default {
       
     },
     handleEditBtn (){
-      this.editable = !this.editable
+      this.editing = !this.editing
     },
     handleAdd (){
       console.log(this.tablePage);
@@ -197,18 +202,18 @@ export default {
       } else {
         this.currentPage = Math.floor(this.total/this.pageSize) + 1;
         this.tablePage.map((item) => {  
-          item.editable = false
+          item.editing = false
         });
-        this.tablePage.push({"dwdm":"","dwmc":"","editable":true});
+        this.tablePage.push({"dwdm":"","dwmc":"","editing":true});
       }
       
     },
     handleEdit(index, row) {
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.tablePage.map((item) => {
-        item.editable = false
+        item.editing = false
       });
-      row.editable = true;
+      row.editing = true;
       console.log(index);
       console.log(row);
 
@@ -219,7 +224,7 @@ export default {
 
     handleCancel(index,row){
       this.getDwxx ();
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.$message({
           type: 'info',
           message: '已取消编辑'
@@ -228,7 +233,7 @@ export default {
     },
 
      handleSave(index,row){
-      row.editable = !row.editable;
+      row.editing = !row.editing;
 
       console.log(row);
       
@@ -311,7 +316,7 @@ export default {
     padding .1rem
     .el-pagination
       float right 
-// .editable
+// .editing
 //   span
 //     display none
 //   .el-input

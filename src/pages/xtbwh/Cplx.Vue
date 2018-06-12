@@ -17,7 +17,7 @@
    
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
-    <!-- :highlight-current-row="editable" -->
+    <!-- :highlight-current-row="editing" -->
     <el-table v-loading="listLoading" :data="tablePage"  
               border :max-height="height" @row-dblclick="handleDbclickRow" 
               @row-click ="handleClickRow" 
@@ -28,54 +28,54 @@
 			</el-table-column>
       <el-table-column prop="cpdm" label="产品代码" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable"  size="small" v-model="scope.row.cpdm" 
+          <el-input v-if="scope.row.editing"  size="small" v-model="scope.row.cpdm" 
                     placeholder="请输入内容" 
                     @change="handleEdit(scope.$index, scope.row)"
                     @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.cpdm}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.cpdm}}</span>
         </template>
       </el-table-column>
       <el-table-column prop="cpmc" label="产品名称" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.cpmc" placeholder="请输入内容" 
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.cpmc" placeholder="请输入内容" 
                     @change="handleChange(scope.$index, scope.row)" 
                     @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.cpmc}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.cpmc}}</span>
         </template>
       </el-table-column>
 
       <el-table-column prop="sfwh" label="产品维护" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editable" size="small" v-model="scope.row.sfwh" placeholder="请输入内容" 
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.sfwh" placeholder="请输入内容" 
                     @change="handleChange(scope.$index, scope.row)" 
                     @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editable">{{scope.row.sfwh}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.sfwh}}</span>
         </template>
       </el-table-column>
 
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
-            v-show="!scope.row.editable"
+            v-show="!scope.row.editing"
             size="mini"
             @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button
-            v-show="scope.row.editable"
+            v-show="scope.row.editing"
             size="mini"
             type="primary"                        
             @click="handleSave(scope.$index, scope.row)">保存</el-button>
           <el-button
-            v-show="scope.row.editable"
+            v-show="scope.row.editing"
             size="mini"
             @click="handleCancel(scope.$index, scope.row)">取消</el-button>
           <el-button
-            v-show="!scope.row.editable"            
+            v-show="!scope.row.editing"            
             size="mini"
             type="danger"
-            @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+            @click="handleDelete(scope.$index, scope.row, tablePage)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -84,7 +84,7 @@
     <!--工具条-->
 		<el-col :span="24" class="toolbar-bottom">
       <!-- @click="batchRemove" :disabled="this.sels.length===0" -->
-			<el-button plain type="danger" :disabled="this.sels.length===0" icon="el-icon-delete">批量删除</el-button>
+			<el-button plain @click="batchDelete" type="danger" :disabled="this.sels.length===0" icon="el-icon-delete">批量删除</el-button>
       <el-pagination
         background
         layout="prev, pager, next"
@@ -101,6 +101,7 @@
 
 <script>
 import axios from 'axios'
+const ADDRESS_CPXX = '/api/systable/cpxx'
 
 export default {
   name: 'Cplx',
@@ -164,7 +165,8 @@ export default {
       this.listLoading = true;      
       //解决除首页外搜索问题 
       this.currentPage = 1;
-      axios.get('/api/cplx.json').then(this.getFilterDataSucc);
+      // axios.get('/api/cplx.json').then(this.getFilterDataSucc);
+      axios.get(ADDRESS_CPXX).then(this.getFilterDataSucc);
       
     },
 
@@ -172,8 +174,8 @@ export default {
       console.log(this.tablePage);
       for (let i = 0; i < this.tablePage.length; i++) {
         let item = this.tablePage[i];
-        if (item.editable) {
-          item.editable = false;
+        if (item.editing) {
+          item.editing = false;
         } 
       }
 
@@ -182,14 +184,15 @@ export default {
       
     },
 
-    getDwxx () {
+    getCpxx () {
       this.listLoading = true;
-      axios.get('/api/cplx.json')
-      .then(this.getDwxxSucc)
+      // axios.get('/api/cplx.json')
+      // .then(this.getCpxxSucc)
+      axios.get(ADDRESS_CPXX).then(this.getCpxxSucc)
     },
-    getDwxxSucc (res) {
+    getCpxxSucc (res) {
       this.listLoading = false;
-      console.log(res);
+      console.log(res.data);
       res = res.data;
       if (res.code === '0000' && res.data) {
         this.tableData = res.data;
@@ -202,10 +205,10 @@ export default {
     },
     handleDbclickRow (row) {
       // this.tableData.map(function(item){  
-      //   item.editable = false
+      //   item.editing = false
       // });
-      // row.editable = true;
-      // console.log(row.editable);
+      // row.editing = true;
+      // console.log(row.editing);
       
     },
     handleClickRow () {
@@ -213,12 +216,12 @@ export default {
     },
     handleBlur () {
         // this.tableData.map(function(item){  
-        // item.editable = false
+        // item.editing = false
       // });
     },
-    handleEditBtn (){
-      this.editable = !this.editable
-    },
+    // handleEditBtn (){
+    //   this.editing = !this.editing
+    // },
     handleAdd (){
       console.log(this.tablePage);
       if(this.tablePage[this.tablePage.length - 1].cpdm === ''){
@@ -229,25 +232,25 @@ export default {
       } else {
         this.currentPage = Math.floor(this.total/this.pageSize) + 1;
         this.tablePage.map((item) => {  
-          item.editable = false
+          item.editing = false
         });
-        this.tablePage.push({"cpdm":"","cpmc":"","editable":true});
+        this.tablePage.push({"cpdm":"","cpmc":"","sfwh":"","editing":true});
       }
       
     },
     handleEdit(index, row) {
-      row.editable = !row.editable;
+      row.editing = !row.editing;
       this.tablePage.map((item) => {
-        item.editable = false
+        item.editing = false
       });
-      row.editable = true;
+      row.editing = true;
       console.log(index);
       console.log(row);
     },
 
     handleCancel(index,row){
-      this.getDwxx ();
-      row.editable = !row.editable;
+      this.getCpxx ();
+      row.editing = !row.editing;
       this.$message({
           type: 'info',
           message: '已取消编辑'
@@ -255,38 +258,155 @@ export default {
        
     },
 
-     handleSave(index,row){
-      row.editable = !row.editable;
-      //调用接口后回调消息
-      this.$message({
-          showClose: true,
-          message: '保存成功！',
-          type: 'success'
-        });
-    },
+     handleSave(index, row) {
+       row.editing = !row.editing;
 
-    handleDelete (index, row){
-     this.$confirm('是否删除此条数据?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
+       if (!row.index) {
+         this.$confirm('是否保存新增数据?', '提示', {
+           confirmButtonText: '确定',
+           cancelButtonText: '取消',
+           type: 'warning'
+         }).then(() => {
+           //调用接口后回调消息
+
+           axios.post(ADDRESS_CPXX, {
+             'cpdm': row.cpdm,
+             'cpmc': row.cpmc,
+             'sfwh': row.sfwh,
+             'xw': '1'
+           }).then(() => {
+             this.$message({
+               showClose: true,
+               message: '新增成功！',
+               type: 'success'
+             });
+           }).catch(() => {
+             this.$message({
+               showClose: true,
+               message: '新增失败！',
+               type: 'info'
+             });
+           })
+         }).catch(() => {
+
+         });
+
+       } else {
+         this.$confirm('是否保存修改?', '提示', {
+           confirmButtonText: '确定',
+           cancelButtonText: '取消',
+           type: 'warning'
+         }).then(() => {
+           //调用接口后回调消息
+
+           axios.post(ADDRESS_CPXX, {
+             'index': row.index,
+             'cpdm': row.cpdm,
+             'cpmc': row.cpmc,
+             'sfwh': row.sfwh,
+             'xw': '0'
+           }).then(() => {
+             this.$message({
+               showClose: true,
+               message: '修改成功！',
+               type: 'success'
+             });
+           }).catch(() => {
+
+           })
+         }).catch(() => {
+
+         });
+       }
+
+
+
+
+
+     },
+
+
+
+
+    handleDelete(index, row, rows) {
+      console.log(rows);
+      this.$confirm('是否删除此条数据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //调用接口
+        let deleteIndex = [];
+        deleteIndex.push(row.index);
+        axios.post(ADDRESS_CPXX,{
+            'index': deleteIndex,
+            'xw': '2'
         }).then(() => {
-          //调用接口
+          rows.splice(index, 1);
           this.$message({
             type: 'success',
             message: '删除成功!'
           });
         }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '已取消删除'
-          });          
+            this.$message({
+              type: 'info',
+              message: '删除失败'
+            });
         });
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
+
+
 
     selsChange (sels){
       this.sels = sels;
       console.log(sels);
+      
+    },
+
+
+    batchDelete(){
+      console.log(this.sels);
+      
+      this.$confirm('是否删除此条数据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(()=>{
+        let deleteIndex = [];
+      this.sels.map((sel) => {
+        deleteIndex.push(sel.index);
+      });
+      console.log(deleteIndex);
+      axios.post(ADDRESS_CPXX,{
+        'index': deleteIndex,
+        'xw': '2'
+      }).then(()=>{
+         this.getCpxx();
+         this.$message({
+            type: 'success',
+            message: '删除成功!'
+          });
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '删除失败'
+        });
+      });
+    }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: '已取消删除'
+        // });
+    });
+
+      
       
     },
 
@@ -295,7 +415,7 @@ export default {
     }
   },
   mounted () {
-      this.getDwxx() 
+      this.getCpxx() 
     
   }
 }
@@ -325,7 +445,7 @@ export default {
     padding .1rem
     .el-pagination
       float right 
-// .editable
+// .editing
 //   span
 //     display none
 //   .el-input

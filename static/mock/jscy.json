@@ -10,7 +10,7 @@
     "wechat": "qianggewechat",
     "bz": "强哥真帅",
     "pwd": "123456",
-    "editable": false
+    "editing": false
   }, {
     "index": "0002",
     "jscy": "强哥2",
@@ -21,7 +21,7 @@
     "wechat": "qianggewechat",
     "bz": "强哥真帅",
     "pwd": "123456",
-    "editable": false
+    "editing": false
   }, {
     "index": "0003",
     "jscy": "强哥3",
@@ -32,7 +32,7 @@
     "wechat": "qianggewechat",
     "bz": "强哥真帅",
     "pwd": "123456",
-    "editable": false
+    "editing": false
   }, {
     "index": "0004",
     "jscy": "强哥4",
@@ -43,6 +43,6 @@
     "wechat": "qianggewechat",
     "bz": "强哥真帅",
     "pwd": "123456",
-    "editable": false
+    "editing": false
   }]
 }
