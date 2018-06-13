@@ -251,13 +251,17 @@ export default {
     },
 
     handleCancel(index,row){
-      this.getCpxx ();
       row.editing = !row.editing;
       this.$message({
           type: 'info',
           message: '已取消编辑'
-        });         
-       
+        });
+
+      //当前页不存在数据时，定位到前一页
+      if (this.tablePage.length === 1) {
+        this.currentPage = this.currentPage - 1;
+      }
+      this.getCpxx(); 
     },
 
      handleSave(index, row) {
@@ -270,18 +274,25 @@ export default {
            type: 'warning'
          }).then(() => {
            //调用接口后回调消息
-
            axios.post(ADDRESS_CPXX, {
              'cpdm': row.cpdm,
              'cpmc': row.cpmc,
              'sfwh': row.sfwh,
              'xw': '1'
-           }).then(() => {
-             this.$message({
-               showClose: true,
-               message: '新增成功！',
-               type: 'success'
-             });
+           }).then((res) => {
+             if (res.data.code === '0000') {
+               this.$message({
+                 showClose: true,
+                 message: '新增成功！',
+                 type: 'success'
+               });
+             } else {
+               this.$message({
+                 showClose: true,
+                 message: res.data.msg,
+                 type: 'info'
+               });
+             }
              this.getCpxx();
              this.currentPage = 1;
            }).catch(() => {
@@ -309,12 +320,20 @@ export default {
              'cpmc': row.cpmc,
              'sfwh': row.sfwh,
              'xw': '0'
-           }).then(() => {
-             this.$message({
-               showClose: true,
-               message: '修改成功！',
-               type: 'success'
-             });
+           }).then((res) => {
+             if (res.data.code === '0000') {
+               this.$message({
+                 showClose: true,
+                 message: '修改成功！',
+                 type: 'success'
+               });
+             } else {
+               this.$message({
+                 showClose: true,
+                 message: res.data.msg,
+                 type: 'info'
+               });
+             }
            }).catch(() => {
 
            })
@@ -322,12 +341,8 @@ export default {
 
          });
        }
-
-
-
-
-
      },
+
 
 
 
@@ -342,20 +357,34 @@ export default {
         //调用接口
         let deleteIndex = [];
         deleteIndex.push(row.index);
-        axios.post(ADDRESS_CPXX,{
-            'index': deleteIndex,
-            'xw': '2'
-        }).then(() => {
-          rows.splice(index, 1);
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-        }).catch(() => {
+        axios.post(ADDRESS_CPXX, {
+          'index': deleteIndex,
+          'xw': '2'
+        }).then((res) => {
+          if (res.data.code === '0000') {
+            rows.splice(index, 1);
             this.$message({
-              type: 'info',
-              message: '删除失败'
+              type: 'success',
+              message: '删除成功!'
             });
+          } else {
+            this.$message({
+              showClose: true,
+              message: res.data.msg,
+              type: 'info'
+            });
+          }
+          //当前页不存在数据时，定位到前一页
+          if (this.tablePage.length === 0) {
+            this.currentPage = this.currentPage - 1;
+          }
+          this.getCpxx();
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '删除失败'
+          });
         });
 
       }).catch(() => {
@@ -368,6 +397,7 @@ export default {
 
 
 
+
     selsChange (sels){
       this.sels = sels;
       console.log(sels);
@@ -375,44 +405,57 @@ export default {
     },
 
 
-    batchDelete(){
+    batchDelete() {
       console.log(this.sels);
-      
+
       this.$confirm('是否删除此条数据?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(()=>{
+      }).then(() => {
         let deleteIndex = [];
-      this.sels.map((sel) => {
-        deleteIndex.push(sel.index);
-      });
-      console.log(deleteIndex);
-      axios.post(ADDRESS_CPXX,{
-        'index': deleteIndex,
-        'xw': '2'
-      }).then(()=>{
-         this.getCpxx();
-         this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '删除失败'
+        this.sels.map((sel) => {
+          deleteIndex.push(sel.index);
         });
-      });
-    }).catch(() => {
+        console.log(deleteIndex);
+        axios.post(ADDRESS_CPXX, {
+          'index': deleteIndex,
+          'xw': '2'
+        }).then((res) => {
+          if (res.data.code === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          } else {
+            this.$message({
+              showClose: true,
+              message: res.data.msg,
+              type: 'info'
+            });
+          }
+          
+          this.getCpxx();
+          
+          this.currentPage = 1;
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '删除失败'
+          });
+        });
+      }).catch(() => {
         // this.$message({
         //   type: 'info',
         //   message: '已取消删除'
         // });
-    });
+      });
 
-      
-      
+
+
     },
+
 
     rowStyle(row) {
       return 'color:green'

@@ -53,7 +53,7 @@
           <el-button v-show="!scope.row.editing" size="mini" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
           <el-button v-show="scope.row.editing" size="mini" type="primary" @click="handleSave(scope.$index, scope.row)">保存</el-button>
           <el-button v-show="scope.row.editing" size="mini" @click="handleCancel(scope.$index, scope.row)">取消</el-button>
-          <el-button v-show="!scope.row.editing" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          <el-button v-show="!scope.row.editing" size="mini" type="danger" @click="handleDelete(scope.$index, scope.row, tablePage)">删除</el-button>
         </template>
       </el-table-column>
     </el-table>
@@ -62,7 +62,7 @@
     <!--工具条-->
     <el-col :span="24" class="toolbar-bottom">
       <!-- @click="batchRemove" :disabled="this.sels.length===0" -->
-      <el-button plain type="danger" :disabled="this.sels.length===0" icon="el-icon-delete" @click="handleBatchDelete">批量删除</el-button>
+      <el-button plain @click="batchDelete" type="danger" :disabled="this.sels.length===0" icon="el-icon-delete">批量删除</el-button>
       <el-pagination background layout="prev, pager, next" @current-change="handleCurrentChange" :page-size="pageSize" :current-page="currentPage"
         :total="total">
       </el-pagination>
@@ -223,47 +223,149 @@ export default {
     },
 
     handleCancel(index,row){
-      this.getDwxx ();
       row.editing = !row.editing;
       this.$message({
           type: 'info',
           message: '已取消编辑'
-        });         
+        });
+
+      //当前页不存在数据时，定位到前一页
+      if (this.tablePage.length === 1) {
+        this.currentPage = this.currentPage - 1;
+      }
+      this.getDwxx();       
        
     },
 
-     handleSave(index,row){
-      row.editing = !row.editing;
+     handleSave(index, row) {
+       row.editing = !row.editing;
+       
+       if (!row.index) {
+         this.$confirm('是否保存新增数据?', '提示', {
+           confirmButtonText: '确定',
+           cancelButtonText: '取消',
+           type: 'warning'
+         }).then(() => {
+           //调用接口后回调消息
+           axios.post(ADDRESS_DWXX, {
+             'dwdm': row.dwdm,
+             'dwmc': row.dwmc,
+             'xzqjb': row.xzqjb,
+             'xw': '1'
+           }).then((res) => {
+             if (res.data.code === '0000') {
+               this.$message({
+                 showClose: true,
+                 message: '新增成功！',
+                 type: 'success'
+               });
+             } else {
+               this.$message({
+                 showClose: true,
+                 message: res.data.msg,
+                 type: 'info'
+               });
+             }
+             this.getDwxx();
+             this.currentPage = 1;
+           }).catch(() => {
+             this.$message({
+               showClose: true,
+               message: '新增失败！',
+               type: 'info'
+             });
+           })
+         }).catch(() => {
 
-      console.log(row);
-      
-      //调用接口后回调消息
-      this.$message({
-          showClose: true,
-          message: '保存成功！',
-          type: 'success'
-        });
-    },
+         });
 
-    handleDelete (index, row){
-     this.$confirm('是否删除此条数据?', '提示', {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning'
-        }).then(() => {
-          console.log(row);
-          
-          //调用接口
-          this.$message({
-            type: 'success',
-            message: '删除成功!'
-          });
+       } else {
+         this.$confirm('是否保存修改?', '提示', {
+           confirmButtonText: '确定',
+           cancelButtonText: '取消',
+           type: 'warning'
+         }).then(() => {
+           //调用接口后回调消息
+
+           axios.post(ADDRESS_DWXX, {
+             'index': row.index,
+             'dwdm': row.dwdm,
+             'dwmc': row.dwmc,
+             'xzqjb': row.xzqjb,
+             'xw': '0'
+           }).then((res) => {
+             console.log(res);
+             
+             if (res.data.code === '0000') {
+               this.$message({
+                 showClose: true,
+                 message: '修改成功！',
+                 type: 'success'
+               });
+             } else {
+               this.$message({
+                 showClose: true,
+                 message: res.data.msg,
+                 type: 'info'
+               });
+               this.getDwxx();
+             }
+           }).catch(() => {
+
+           })
+         }).catch(() => {
+
+         });
+       }
+     },
+
+
+     handleDelete(index, row, rows) {
+      console.log(rows);
+      this.$confirm('是否删除此条数据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        //调用接口
+        let deleteIndex = [];
+        deleteIndex.push(row.index);
+        axios.post(ADDRESS_DWXX, {
+          'index': deleteIndex,
+          'xw': '2'
+        }).then((res) => {
+          if (res.data.code === '0000') {
+            rows.splice(index, 1);
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          } else {
+            this.$message({
+              showClose: true,
+              message: res.data.msg,
+              type: 'info'
+            });
+          }
+          //当前页不存在数据时，定位到前一页
+          if (this.tablePage.length === 0) {
+            this.currentPage = this.currentPage - 1;
+          }
+          this.getDwxx();
+
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '已取消删除'
-          });          
+            message: '删除失败'
+          });
         });
+
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });
+      });
     },
 
     selsChange (sels){
@@ -272,14 +374,55 @@ export default {
       
     },
 
-    handleBatchDelete (){
-      let sels = this.sels;
-      let deleteIdx = [];
-      sels.map(function (item) {
-        deleteIdx.push(item.index)
+    batchDelete() {
+      console.log(this.sels);
+
+      this.$confirm('是否删除这些数据?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        let deleteIndex = [];
+        this.sels.map((sel) => {
+          deleteIndex.push(sel.index);
+        });
+        console.log(deleteIndex);
+        axios.post(ADDRESS_DWXX, {
+          'index': deleteIndex,
+          'xw': '2'
+        }).then((res) => {
+          if (res.data.code === '0000') {
+            this.$message({
+              type: 'success',
+              message: '删除成功!'
+            });
+          } else {
+            this.$message({
+              showClose: true,
+              message: res.data.msg,
+              type: 'info'
+            });
+          }
+
+          this.getDwxx();
+
+          this.currentPage = 1;
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '删除失败'
+          });
+        });
+      }).catch(() => {
+        // this.$message({
+        //   type: 'info',
+        //   message: '已取消删除'
+        // });
       });
-      console.log(deleteIdx);
     },
+
+
 
     rowStyle(row) {
       return 'color:green'
