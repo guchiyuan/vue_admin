@@ -328,7 +328,8 @@
             <el-date-picker
               v-model="editForm.jzsj"
               type="date"
-              placeholder="选择日期">
+              placeholder="选择日期"
+              value-format="yyyy-MM-dd">
             </el-date-picker>
             <!-- <el-input v-model="editForm.jzsj" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
           </el-form-item>
@@ -540,7 +541,8 @@
               <el-date-picker
                 v-model="addForm.jzsj"
                 type="date"
-                placeholder="选择日期">
+                placeholder="选择日期"
+                value-format="yyyy-MM-dd">
               </el-date-picker>
               <!-- <el-input v-model="addForm.jzsj" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>

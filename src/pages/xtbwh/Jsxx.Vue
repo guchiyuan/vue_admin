@@ -95,364 +95,380 @@ const ADDRESS_JSXX ='api/systable/jsxx'
 
 export default {
   name: 'Jsxx',
-  data() {
-    return {
-      pageSize: Math.floor((window.innerHeight - 230)/53),
-      // pageSize: 20,
-      currentPage:1,
-      tableData: [],
-      total: 0,
-      listLoading: false,
-      sels: [],//列表选中列
-      filters: {
-					name: ''
+    data() {
+      return {
+        pageSize: Math.floor((window.innerHeight - 230) / 53),
+        // pageSize: 20,
+        currentPage: 1,
+        tableData: [],
+        total: 0,
+        listLoading: false,
+        sels: [], //列表选中列
+        filters: {
+          name: ''
         },
-      filterData:[]
-    }
-  },
-  computed:{
-    tablePage () {
-      return this.tableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
-    },
-    height () {
-      return (this.pageSize + 1) *59
-    }
-
-  },
-  methods:{
-    getFilterDataSucc(res) {
-      this.listLoading = false;      
-      res = res.data;
-      if (res.code === '0000' && res.data) {
-        this.tableData = res.data;
-        this.total = res.data.length;
+        filterData: []
       }
-      this.filterData = [];
+    },
+    computed: {
+      tablePage() {
+        return this.tableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
+      },
+      height() {
+        return (this.pageSize + 1) * 59
+      }
 
-      console.log(this.tableData);
-      
+    },
+    methods: {
+      getFilterDataSucc(res) {
+        this.listLoading = false;
+        res = res.data;
+        if (res.code === '0000' && res.data) {
+          this.tableData = res.data;
+          this.total = res.data.length;
+        }
+        this.filterData = [];
 
-      if (this.filters.name !== '') {    
+        console.log(this.tableData);
+
+
+        if (this.filters.name !== '') {
           this.tableData.map((item) => {
             if (item.jsmc.indexOf(this.filters.name) !== -1) {
-              this.filterData.push(item);         
+              this.filterData.push(item);
+            }
+          });
+
+          console.log(this.filterData);
+          this.tableData = this.filterData;
+          console.log(this.filterData.length);
+          // this.tableData = this.filterData.slice(0,this.filterData.length);
+          this.total = this.tableData.length;
+          console.log(this.tableData);
+
+        }
+
+      },
+
+
+      getFilterData() {
+        this.listLoading = true;
+        //解决除首页外搜索问题 
+        this.currentPage = 1;
+        // axios.get('/api/jsxx.json').then(this.getFilterDataSucc);
+        axios.get(ADDRESS_JSXX).then(this.getFilterDataSucc);
+
+      },
+
+      handleCurrentChange(curr) {
+        console.log(this.tablePage);
+        for (let i = 0; i < this.tablePage.length; i++) {
+          let item = this.tablePage[i];
+          if (item.editing) {
+            item.editing = false;
           }
-        });
+        }
 
-        console.log(this.filterData);
-        this.tableData = this.filterData;
-        console.log(this.filterData.length);
-        // this.tableData = this.filterData.slice(0,this.filterData.length);
-        this.total = this.tableData.length;
+        this.currentPage = curr;
         console.log(this.tableData);
-        
-      } 
 
-    },
+      },
 
+      getJsxx() {
+        this.listLoading = true;
+        // axios.get('/api/jsxx.json')
+        // .then(this.getJsxxSucc)
+        axios.get(ADDRESS_JSXX)
+          .then(this.getJsxxSucc)
+      },
+      getJsxxSucc(res) {
+        this.listLoading = false;
+        console.log(res);
+        res = res.data;
+        if (res.code === '0000' && res.data) {
+          this.tableData = res.data;
+          this.total = res.data.length;
+        }
+      },
+      handleChange(index, row) {
+        console.log(index);
+        console.log(row);
+      },
+      handleDbclickRow(row) {
+        // this.tableData.map(function(item){  
+        //   item.editing = false
+        // });
+        // row.editing = true;
+        // console.log(row.editing);
 
-    getFilterData (){
-      this.listLoading = true;      
-      //解决除首页外搜索问题 
-      this.currentPage = 1;
-      // axios.get('/api/jsxx.json').then(this.getFilterDataSucc);
-      axios.get(ADDRESS_JSXX).then(this.getFilterDataSucc);
-      
-    },
+      },
+      handleClickRow() {
 
-    handleCurrentChange(curr) {
-      console.log(this.tablePage);
-      for (let i = 0; i < this.tablePage.length; i++) {
-        let item = this.tablePage[i];
-        if (item.editing) {
-          item.editing = false;
-        } 
-      }
-
-      this.currentPage = curr;
-      console.log(this.tableData);
-      
-    },
-
-    getJsxx () {
-      this.listLoading = true;
-      // axios.get('/api/jsxx.json')
-      // .then(this.getJsxxSucc)
-      axios.get(ADDRESS_JSXX)
-      .then(this.getJsxxSucc)
-    },
-    getJsxxSucc (res) {
-      this.listLoading = false;
-      console.log(res);
-      res = res.data;
-      if (res.code === '0000' && res.data) {
-        this.tableData = res.data;
-        this.total = res.data.length;
-      }
-    },
-    handleChange(index, row) {
-      console.log(index);
-      console.log(row);
-    },
-    handleDbclickRow (row) {
-      // this.tableData.map(function(item){  
-      //   item.editing = false
-      // });
-      // row.editing = true;
-      // console.log(row.editing);
-      
-    },
-    handleClickRow () {
-      
-    },
-    handleBlur () {
+      },
+      handleBlur() {
         // this.tableData.map(function(item){  
         // item.editing = false
-      // });
-    },
-    handleEditBtn (){
-      this.editing = !this.editing
-    },
-    handleAdd (){
-      console.log(this.tablePage);
-      if(this.tablePage[this.tablePage.length - 1].jsdm === ''){
-        this.$message({
-              message: '亲，您还有新数据没填写完整！',
-              type: 'warning'
-            });
-      } else {
-        this.currentPage = Math.floor(this.total/this.pageSize) + 1;
-        this.tablePage.map((item) => {  
+        // });
+      },
+      handleEditBtn() {
+        this.editing = !this.editing
+      },
+      handleAdd() {
+        console.log(this.tablePage);
+        if (this.tablePage[this.tablePage.length - 1].jsdm === '') {
+          this.$message({
+            message: '亲，您还有新数据没填写完整！',
+            type: 'warning'
+          });
+        } else {
+          this.currentPage = Math.floor(this.total / this.pageSize) + 1;
+          this.tablePage.map((item) => {
+            item.editing = false
+          });
+          this.tablePage.push({
+            "jsdm": "",
+            "jsmc": "",
+            "editing": true
+          });
+        }
+
+      },
+      handleEdit(index, row) {
+        row.editing = !row.editing;
+        this.tablePage.map((item) => {
           item.editing = false
         });
-        this.tablePage.push({"jsdm":"","jsmc":"","editing":true});
-      }
-      
-    },
-    handleEdit(index, row) {
-      row.editing = !row.editing;
-      this.tablePage.map((item) => {
-        item.editing = false
-      });
-      row.editing = true;
-      console.log(index);
-      console.log(row);
-    },
+        row.editing = true;
+        console.log(index);
+        console.log(row);
+      },
 
-    handleCancel(index,row){
-      row.editing = !row.editing;
-      this.$message({
+      handleCancel(index, row) {
+        row.editing = !row.editing;
+        this.$message({
           type: 'info',
           message: '已取消编辑'
         });
-      
-      //当前页不存在数据时，定位到前一页
-      if (this.tablePage.length === 1) {
-        this.currentPage = this.currentPage - 1;
+
+        //当前页不存在数据时，定位到前一页
+        if (this.tablePage.length === 1) {
+          this.currentPage = this.currentPage - 1;
+        }
+        this.getJsxx();
+
+      },
+
+      handleSave(index, row) {
+
+        if (row.jsdm && row.jsmc) {
+          row.editing = !row.editing;
+
+          if (!row.index) {
+            this.$confirm('是否保存新增数据?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              //调用接口后回调消息
+              axios.post(ADDRESS_JSXX, {
+                'jsdm': row.jsdm,
+                'jsmc': row.jsmc,
+                'xw': '1'
+              }).then((res) => {
+                if (res.data.code === '0000') {
+                  this.$message({
+                    showClose: true,
+                    message: '新增成功！',
+                    type: 'success'
+                  });
+                } else {
+                  this.$message({
+                    showClose: true,
+                    message: res.data.msg,
+                    type: 'info'
+                  });
+                }
+                this.getJsxx();
+                this.currentPage = 1;
+              }).catch(() => {
+                this.$message({
+                  showClose: true,
+                  message: '新增失败！',
+                  type: 'info'
+                });
+              })
+            }).catch(() => {
+              this.getJsxx();
+              this.$message({
+                showClose: true,
+                message: '已取消保存',
+                type: 'info'
+              });
+            });
+
+
+          } else {
+            this.$confirm('是否保存修改?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              //调用接口后回调消息
+
+              axios.post(ADDRESS_JSXX, {
+                'index': row.index,
+                'jsdm': row.jsdm,
+                'jsmc': row.jsmc,
+                'xw': '0'
+              }).then((res) => {
+                if (res.data.code === '0000') {
+                  this.$message({
+                    showClose: true,
+                    message: '修改成功！',
+                    type: 'success'
+                  });
+                } else {
+                  this.$message({
+                    showClose: true,
+                    message: res.data.msg,
+                    type: 'info'
+                  });
+                }
+              }).catch(() => {
+
+              })
+            }).catch(() => {
+              this.getJsxx();
+              this.$message({
+                showClose: true,
+                message: '已取消保存',
+                type: 'info'
+              });
+            });
+          }
+        } else {
+          this.$message({
+            showClose: true,
+            message: '请填入对应内容后再保存',
+            type: 'warning'
+          });
+        }
+
+
+      },
+
+
+      handleDelete(index, row, rows) {
+        console.log(rows);
+        this.$confirm('是否删除此条数据?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          //调用接口
+          let deleteIndex = [];
+          deleteIndex.push(row.index);
+          axios.post(ADDRESS_JSXX, {
+            'index': deleteIndex,
+            'xw': '2'
+          }).then((res) => {
+            if (res.data.code === '0000') {
+              rows.splice(index, 1);
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            } else {
+              this.$message({
+                showClose: true,
+                message: res.data.msg,
+                type: 'info'
+              });
+            }
+            //当前页不存在数据时，定位到前一页
+            if (this.tablePage.length === 0) {
+              this.currentPage = this.currentPage - 1;
+            }
+            this.getJsxx();
+
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '删除失败'
+            });
+          });
+
+        }).catch(() => {
+          this.$message({
+            type: 'info',
+            message: '已取消删除'
+          });
+        });
+      },
+
+      selsChange(sels) {
+        this.sels = sels;
+        console.log(sels);
+
+      },
+
+      batchDelete() {
+        console.log(this.sels);
+
+        this.$confirm('是否删除这些数据?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消',
+          type: 'warning'
+        }).then(() => {
+          let deleteIndex = [];
+          this.sels.map((sel) => {
+            deleteIndex.push(sel.index);
+          });
+          console.log(deleteIndex);
+          axios.post(ADDRESS_JSXX, {
+            'index': deleteIndex,
+            'xw': '2'
+          }).then((res) => {
+            if (res.data.code === '0000') {
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            } else {
+              this.$message({
+                showClose: true,
+                message: res.data.msg,
+                type: 'info'
+              });
+            }
+
+            this.getJsxx();
+
+            this.currentPage = 1;
+
+          }).catch(() => {
+            this.$message({
+              type: 'info',
+              message: '删除失败'
+            });
+          });
+        }).catch(() => {
+          // this.$message({
+          //   type: 'info',
+          //   message: '已取消删除'
+          // });
+        });
+      },
+
+      rowStyle(row) {
+        return 'color:green'
       }
-      this.getJsxx(); 
-       
     },
+    mounted() {
+      this.getJsxx()
 
-     handleSave(index, row) {
-       row.editing = !row.editing;
-
-       if (!row.index) {
-         this.$confirm('是否保存新增数据?', '提示', {
-           confirmButtonText: '确定',
-           cancelButtonText: '取消',
-           type: 'warning'
-         }).then(() => {
-           //调用接口后回调消息
-           axios.post(ADDRESS_JSXX, {
-             'jsdm': row.jsdm,
-             'jsmc': row.jsmc,
-             'xw': '1'
-           }).then((res) => {
-             if (res.data.code === '0000') {
-               this.$message({
-                 showClose: true,
-                 message: '新增成功！',
-                 type: 'success'
-               });
-             } else {
-               this.$message({
-                 showClose: true,
-                 message: res.data.msg,
-                 type: 'info'
-               });
-             }
-             this.getJsxx();
-             this.currentPage = 1;
-           }).catch(() => {
-             this.$message({
-               showClose: true,
-               message: '新增失败！',
-               type: 'info'
-             });
-           })
-         }).catch(() => {
-           this.getJsxx();
-           this.$message({
-             showClose: true,
-             message: '已取消保存',
-             type: 'info'
-           });
-         });
-
-
-       } else {
-         this.$confirm('是否保存修改?', '提示', {
-           confirmButtonText: '确定',
-           cancelButtonText: '取消',
-           type: 'warning'
-         }).then(() => {
-           //调用接口后回调消息
-
-           axios.post(ADDRESS_JSXX, {
-             'index': row.index,
-             'jsdm': row.jsdm,
-             'jsmc': row.jsmc,
-             'xw': '0'
-           }).then((res) => {
-             if (res.data.code === '0000') {
-               this.$message({
-                 showClose: true,
-                 message: '修改成功！',
-                 type: 'success'
-               });
-             } else {
-               this.$message({
-                 showClose: true,
-                 message: res.data.msg,
-                 type: 'info'
-               });
-             }
-           }).catch(() => {
-
-           })
-         }).catch(() => {
-           this.getJsxx();
-           this.$message({
-             showClose: true,
-             message: '已取消保存',
-             type: 'info'
-           });
-         });
-       }
-     },
-
-
-    handleDelete(index, row, rows) {
-      console.log(rows);
-      this.$confirm('是否删除此条数据?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        //调用接口
-        let deleteIndex = [];
-        deleteIndex.push(row.index);
-        axios.post(ADDRESS_JSXX, {
-          'index': deleteIndex,
-          'xw': '2'
-        }).then((res) => {
-          if (res.data.code === '0000') {
-            rows.splice(index, 1);
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          } else {
-            this.$message({
-              showClose: true,
-              message: res.data.msg,
-              type: 'info'
-            });
-          }
-          //当前页不存在数据时，定位到前一页
-          if (this.tablePage.length === 0) {
-            this.currentPage = this.currentPage - 1;
-          }
-          this.getJsxx();
-
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '删除失败'
-          });
-        });
-
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      });
-    },
-
-    selsChange (sels){
-      this.sels = sels;
-      console.log(sels);
-      
-    },
-
-    batchDelete() {
-      console.log(this.sels);
-
-      this.$confirm('是否删除这些数据?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        let deleteIndex = [];
-        this.sels.map((sel) => {
-          deleteIndex.push(sel.index);
-        });
-        console.log(deleteIndex);
-        axios.post(ADDRESS_JSXX, {
-          'index': deleteIndex,
-          'xw': '2'
-        }).then((res) => {
-          if (res.data.code === '0000') {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          } else {
-            this.$message({
-              showClose: true,
-              message: res.data.msg,
-              type: 'info'
-            });
-          }
-          
-          this.getJsxx();
-          
-          this.currentPage = 1;
-
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '删除失败'
-          });
-        });
-      }).catch(() => {
-        // this.$message({
-        //   type: 'info',
-        //   message: '已取消删除'
-        // });
-      });
-    },
-
-    rowStyle(row) {
-      return 'color:green'
     }
-  },
-  mounted () {
-      this.getJsxx() 
-    
-  }
+
 }
 </script>
 

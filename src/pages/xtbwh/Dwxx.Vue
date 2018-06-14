@@ -82,32 +82,32 @@ export default {
   name: 'Dwxx',
   data() {
     return {
-      pageSize: Math.floor((window.innerHeight - 230)/53),
+      pageSize: Math.floor((window.innerHeight - 230) / 53),
       // pageSize: 20,
-      currentPage:1,
+      currentPage: 1,
       tableData: [],
       total: 0,
       listLoading: false,
-      sels: [],//列表选中列
+      sels: [], //列表选中列
       filters: {
-					name: ''
-        },
-      filterData:[],
+        name: ''
+      },
+      filterData: [],
 
-    } 
+    }
   },
-  computed:{
-    tablePage () {
+  computed: {
+    tablePage() {
       return this.tableData.slice((this.currentPage - 1) * this.pageSize, this.currentPage * this.pageSize)
     },
-    height () {
-      return (this.pageSize + 1) *59
+    height() {
+      return (this.pageSize + 1) * 59
     }
 
   },
-  methods:{
+  methods: {
     getFilterDataSucc(res) {
-      this.listLoading = false;      
+      this.listLoading = false;
       res = res.data;
       if (res.code === '0000' && res.data) {
         this.tableData = res.data;
@@ -116,12 +116,12 @@ export default {
       this.filterData = [];
 
       // console.log(this.tableData);
-      
 
-      if (this.filters.name !== '') {    
-          this.tableData.map((item) => {
-            if (item.dwmc.indexOf(this.filters.name) !== -1) {
-              this.filterData.push(item);         
+
+      if (this.filters.name !== '') {
+        this.tableData.map((item) => {
+          if (item.dwmc.indexOf(this.filters.name) !== -1) {
+            this.filterData.push(item);
           }
         });
 
@@ -131,19 +131,19 @@ export default {
         // this.tableData = this.filterData.slice(0,this.filterData.length);
         this.total = this.tableData.length;
         console.log(this.tableData);
-        
-      } 
+
+      }
 
     },
 
 
-    getFilterData (){
+    getFilterData() {
       this.listLoading = true;
       //解决除首页外搜索问题 
       this.currentPage = 1;
       // axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
       axios.get(ADDRESS_DWXX).then(this.getFilterDataSucc);
-      
+
     },
 
     handleCurrentChange(curr) {
@@ -152,22 +152,22 @@ export default {
         let item = this.tablePage[i];
         if (item.editing) {
           item.editing = false;
-        } 
+        }
       }
 
       this.currentPage = curr;
       console.log(this.tableData);
-      
+
     },
 
-    getDwxx () {
+    getDwxx() {
       this.listLoading = true;
       // axios.get('/api/dwxx.json')
       // .then(this.getDwxxSucc)
       axios.get(ADDRESS_DWXX)
-      .then(this.getDwxxSucc)
+        .then(this.getDwxxSucc)
     },
-    getDwxxSucc (res) {
+    getDwxxSucc(res) {
       this.listLoading = false;
       console.log(res);
       res = res.data;
@@ -180,33 +180,37 @@ export default {
       console.log(index);
       console.log(row);
     },
-    handleDbclickRow (row) {
-    
+    handleDbclickRow(row) {
+
     },
-    handleClickRow () {
-      
+    handleClickRow() {
+
     },
-    handleBlur () {
-      
+    handleBlur() {
+
     },
-    handleEditBtn (){
+    handleEditBtn() {
       this.editing = !this.editing
     },
-    handleAdd (){
+    handleAdd() {
       console.log(this.tablePage);
-      if(this.tablePage[this.tablePage.length - 1].dwdm === ''){
+      if (this.tablePage[this.tablePage.length - 1].dwdm === '') {
         this.$message({
-              message: '亲，您还有新数据没填写完整！',
-              type: 'warning'
-            });
+          message: '亲，您还有新数据没填写完整！',
+          type: 'warning'
+        });
       } else {
-        this.currentPage = Math.floor(this.total/this.pageSize) + 1;
-        this.tablePage.map((item) => {  
+        this.currentPage = Math.floor(this.total / this.pageSize) + 1;
+        this.tablePage.map((item) => {
           item.editing = false
         });
-        this.tablePage.push({"dwdm":"","dwmc":"","editing":true});
+        this.tablePage.push({
+          "dwdm": "",
+          "dwmc": "",
+          "editing": true
+        });
       }
-      
+
     },
     handleEdit(index, row) {
       row.editing = !row.editing;
@@ -218,120 +222,131 @@ export default {
       console.log(row);
 
       this.editFormVisible = true;
-			this.editForm = Object.assign({}, row);
+      this.editForm = Object.assign({}, row);
 
     },
 
-    handleCancel(index,row){
+    handleCancel(index, row) {
       row.editing = !row.editing;
       this.$message({
-          type: 'info',
-          message: '已取消编辑'
-        });
+        type: 'info',
+        message: '已取消编辑'
+      });
 
       //当前页不存在数据时，定位到前一页
       if (this.tablePage.length === 1) {
         this.currentPage = this.currentPage - 1;
       }
-      this.getDwxx();       
-       
+      this.getDwxx();
+
     },
 
-     handleSave(index, row) {
-       row.editing = !row.editing;
+    handleSave(index, row) {
 
-       if (!row.index) {
-         this.$confirm('是否保存新增数据?', '提示', {
-           confirmButtonText: '确定',
-           cancelButtonText: '取消',
-           type: 'warning'
-         }).then(() => {
-           //调用接口后回调消息
-           axios.post(ADDRESS_DWXX, {
-             'dwdm': row.dwdm,
-             'dwmc': row.dwmc,
-             'xzqjb': row.xzqjb,
-             'xw': '1'
-           }).then((res) => {
-             if (res.data.code === '0000') {
-               this.$message({
-                 showClose: true,
-                 message: '新增成功！',
-                 type: 'success'
-               });
-             } else {
-               this.$message({
-                 showClose: true,
-                 message: res.data.msg,
-                 type: 'info'
-               });
-             }
-             this.getDwxx();
-             this.currentPage = 1;
-           }).catch(() => {
-             this.$message({
-               showClose: true,
-               message: '新增失败！',
-               type: 'info'
-             });
-           })
-         }).catch(() => {
-           this.getDwxx();
-           this.$message({
-             showClose: true,
-             message: '已取消保存',
-             type: 'info'
-           });
-         });
+      if (row.dwdm && row.dwmc && row.xzqjb) {
+        row.editing = !row.editing;
 
-       } else {
-         this.$confirm('是否保存修改?', '提示', {
-           confirmButtonText: '确定',
-           cancelButtonText: '取消',
-           type: 'warning'
-         }).then(() => {
-           //调用接口后回调消息
+        if (!row.index) {
+          this.$confirm('是否保存新增数据?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            //调用接口后回调消息
+            axios.post(ADDRESS_DWXX, {
+              'dwdm': row.dwdm,
+              'dwmc': row.dwmc,
+              'xzqjb': row.xzqjb,
+              'xw': '1'
+            }).then((res) => {
+              if (res.data.code === '0000') {
+                this.$message({
+                  showClose: true,
+                  message: '新增成功！',
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  showClose: true,
+                  message: res.data.msg,
+                  type: 'info'
+                });
+              }
+              this.getDwxx();
+              this.currentPage = 1;
+            }).catch(() => {
+              this.$message({
+                showClose: true,
+                message: '新增失败！',
+                type: 'info'
+              });
+            })
+          }).catch(() => {
+            this.getDwxx();
+            this.$message({
+              showClose: true,
+              message: '已取消保存',
+              type: 'info'
+            });
+          });
 
-           axios.post(ADDRESS_DWXX, {
-             'index': row.index,
-             'dwdm': row.dwdm,
-             'dwmc': row.dwmc,
-             'xzqjb': row.xzqjb,
-             'xw': '0'
-           }).then((res) => {
-             console.log(res);
+        } else {
+          this.$confirm('是否保存修改?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            //调用接口后回调消息
 
-             if (res.data.code === '0000') {
-               this.$message({
-                 showClose: true,
-                 message: '修改成功！',
-                 type: 'success'
-               });
-             } else {
-               this.$message({
-                 showClose: true,
-                 message: res.data.msg,
-                 type: 'info'
-               });
-               this.getDwxx();
-             }
-           }).catch(() => {
+            axios.post(ADDRESS_DWXX, {
+              'index': row.index,
+              'dwdm': row.dwdm,
+              'dwmc': row.dwmc,
+              'xzqjb': row.xzqjb,
+              'xw': '0'
+            }).then((res) => {
+              console.log(res);
 
-           })
-         }).catch(() => {
-           this.getDwxx();
-           this.$message({
-             showClose: true,
-             message: '已取消保存',
-             type: 'info'
-           });
-         });
-       }
-     },
+              if (res.data.code === '0000') {
+                this.$message({
+                  showClose: true,
+                  message: '修改成功！',
+                  type: 'success'
+                });
+              } else {
+                this.$message({
+                  showClose: true,
+                  message: res.data.msg,
+                  type: 'info'
+                });
+                this.getDwxx();
+              }
+            }).catch(() => {
+
+            })
+          }).catch(() => {
+            this.getDwxx();
+            this.$message({
+              showClose: true,
+              message: '已取消保存',
+              type: 'info'
+            });
+          });
+        }
+      } else {
+        this.$message({
+          showClose: true,
+          message: '请填入对应内容后再保存',
+          type: 'warning'
+        });
+      }
+
+
+    },
 
 
 
-     handleDelete(index, row, rows) {
+    handleDelete(index, row, rows) {
       console.log(rows);
       this.$confirm('是否删除此条数据?', '提示', {
         confirmButtonText: '确定',
@@ -379,10 +394,10 @@ export default {
       });
     },
 
-    selsChange (sels){
+    selsChange(sels) {
       this.sels = sels;
       console.log(sels);
-      
+
     },
 
     batchDelete() {
@@ -439,11 +454,12 @@ export default {
       return 'color:green'
     }
   },
-  mounted () {
-      this.getDwxx() 
-    
+  mounted() {
+    this.getDwxx()
+
   }
 }
+
 </script>
 
 <style lang="stylus" scoped>
