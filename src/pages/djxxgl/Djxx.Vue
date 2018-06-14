@@ -4,8 +4,16 @@
     <div class="toolbar-top">
       <!-- <span>单位信息表</span> -->
       <el-form :inline="true" :model="filters">
+        <el-select @change="onSelectedSearchField" v-model="searchField" placeholder="请选择">
+          <el-option
+            v-for="item in searchOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <el-form-item>
-          <el-input v-model="filters.name" placeholder="单位名称" clearable></el-input>
+          <el-input v-model="filters.name" placeholder="请填入内容" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
@@ -22,43 +30,43 @@
       :header-row-style="rowStyle" @selection-change="selsChange">
       <el-table-column type="selection" width="50">
       </el-table-column>
-      <el-table-column prop="dwdm" label="单位代码" sortable>
+      <el-table-column prop="dwdm" label="单位代码">
         <template slot-scope="scope">
           <span>{{scope.row.dwdm}}</span>
         </template>
       </el-table-column>
-      <el-table-column prop="dwmc" label="单位名称" sortable>
+      <el-table-column prop="dwmc" label="单位名称" >
         <template slot-scope="scope">
           <span>{{scope.row.dwmc}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="xmddm" label="项目点代码" sortable>
+      <el-table-column prop="xmddm" label="项目点代码">
         <template slot-scope="scope">
           <span>{{scope.row.xmddm}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="xmdmc" label="项目点名称" sortable>
+      <el-table-column prop="xmdmc" label="项目点名称">
         <template slot-scope="scope">
           <span>{{scope.row.xmdmc}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="cpdm" label="产品代码" sortable>
+      <el-table-column prop="cpdm" label="产品代码" >
         <template slot-scope="scope">
           <span>{{scope.row.cpdm}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="sfjmg" label="加密狗" sortable
+      <el-table-column prop="sfjmg" label="加密狗" 
         :formatter="formatterSfjmg">
         <!-- <template slot-scope="scope">
           <span v-if="!scope.row.editing">{{scope.row.sfjmg}}</span>
         </template> -->
       </el-table-column>
 
-      <el-table-column prop="sfsq" label="是否授权" sortable
+      <el-table-column prop="sfsq" label="是否授权" 
       :formatter="formatterSfsq">
         <!-- <template slot-scope="scope">        
           <span>{{scope.row.sfsq}}</span>
@@ -141,28 +149,36 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="单位代码" prop="dwdm">
-               <el-autocomplete
+              <el-select @change="onSelectedEditDwdm" v-model="editForm.dwdm" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in xzqdms"
+                  :key="item.index"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+               <!-- <el-autocomplete
                 class="inline-input"
                 v-model="editForm.dwdm"
                 :fetch-suggestions="queryXzqdm"
                 placeholder="请输入内容"
                 @select="handleSelectXzqdm"
               >
-              </el-autocomplete>
+              </el-autocomplete> -->
               <!-- <el-input v-model="editForm.dwdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="单位名称" prop="dwmc">
-              <el-autocomplete
+              <!-- <el-autocomplete
                 class="inline-input"
                 v-model="editForm.dwmc"
                 :fetch-suggestions="queryXzqmc"
                 placeholder="请输入内容"
                 @select="handleSelectXzqdm"
               >
-              </el-autocomplete>
-              <!-- <el-input v-model="editForm.dwmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+              </el-autocomplete> -->
+              <el-input disabled v-model="editForm.dwmc" auto-complete="off" placeholder="" ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -170,54 +186,99 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="项目点代码" prop="xmddm">
-              <el-autocomplete
+               <el-select @change="onSelectedEditXmddm" v-model="editForm.xmddm" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in xzqdms"
+                  :key="item.index"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-autocomplete
                 class="inline-input"
                 v-model="editForm.xmddm"
                 :fetch-suggestions="queryXzqdm"
                 placeholder="请输入内容"
                 @select="handleSelectXzqdm"
               >
-              </el-autocomplete>
+              </el-autocomplete> -->
               <!-- <el-input v-model="editForm.xmddm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="项目点名称" prop="xmdmc">
-              <el-autocomplete
+              <!-- <el-autocomplete
                 class="inline-input"
                 v-model="editForm.xmdmc"
                 :fetch-suggestions="queryXzqmc"
                 placeholder="请输入内容"
                 @select="handleSelectXzqdm"
               >
-              </el-autocomplete>
-              <!-- <el-input v-model="editForm.xmdmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+              </el-autocomplete> -->
+              <el-input disabled v-model="editForm.xmdmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="初审人" prop="csr">
-              <el-input  v-model="editForm.csr" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
+            <el-form-item label="一审人" prop="csr">
+              <el-select @change="onSelectedEditCsr" v-model="editForm.csr" placeholder="请选择">
+                  <el-option-group
+                    v-for="group in csrAndXmjl"
+                    :key="group.label"
+                    :label="group.label">
+                    <el-option
+                      v-for="item in group.options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-option-group>
+                </el-select>
+              <!-- <el-input  v-model="editForm.csr" auto-complete="off" clearable  placeholder="请输入内容"></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="复审人" prop="fsr">
-              <el-input v-model="editForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            <el-form-item label="二审人" prop="fsr">
+              <el-select :disabled="selectedEditXmjl" v-model="editForm.fsr" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in fsr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-input v-model="editForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="授权审核人" prop="sqshr">
-              <el-input v-model="editForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            <el-form-item label="三审人" prop="sqshr">
+              <el-select :disabled="selectedEditXmjl" v-model="editForm.sqshr" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in sqshr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-input v-model="editForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="录入人" prop="lrr">
-              <el-input v-model="editForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+              <el-select v-model="editForm.lrr" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in lrr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-input v-model="editForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -225,20 +286,30 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="产品代码" prop="cpdm">
-              <el-autocomplete
+              <el-select v-model="editForm.cpdm" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in cpdms"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-autocomplete
                 class="inline-input"
                 v-model="editForm.cpdm"
                 :fetch-suggestions="queryCpdm"
                 placeholder="请输入内容"
                 @select="handleSelectXzqdm"
                 >
-              </el-autocomplete>
+              </el-autocomplete> -->
               <!-- <el-input v-model="editForm.cpdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="加密狗" prop="sfjmg">
-              <el-input v-model="editForm.sfjmg" auto-complete="off" clearable  placeholder="0：不使用，1：使用" ></el-input>
+              <el-radio v-model="editForm.sfjmg" label="1">是</el-radio>
+              <el-radio v-model="editForm.sfjmg" label="0">否</el-radio>
+              <!-- <el-input v-model="editForm.sfjmg" auto-complete="off" clearable  placeholder="0：不使用，1：使用" ></el-input> -->
             </el-form-item>
           </el-col>
           </el-row>
@@ -247,7 +318,9 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="是否授权" prop="sfsq">
-              <el-input v-model="editForm.sfsq" auto-complete="off" clearable  placeholder="0：否，1：是" ></el-input>
+              <el-radio v-model="editForm.sfsq" label="1">是</el-radio>
+              <el-radio v-model="editForm.sfsq" label="0">否</el-radio>
+              <!-- <el-input v-model="editForm.sfsq" auto-complete="off" clearable  placeholder="0：否，1：是" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -288,28 +361,19 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="单位代码" prop="dwdm">
-               <el-autocomplete
-                class="inline-input"
-                v-model="addForm.dwdm"
-                :fetch-suggestions="queryXzqdm"
-                placeholder="请输入内容"
-                @select="handleSelectXzqdm"
-              >
-              </el-autocomplete>
-              <!-- <el-input v-model="addForm.dwdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+              <el-select @change="onSelectedAddDwdm" v-model="addForm.dwdm" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in xzqdms"
+                  :key="item.index"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="单位名称" prop="dwmc">
-              <el-autocomplete
-              class="inline-input"
-              v-model="addForm.dwmc"
-              :fetch-suggestions="queryXzqmc"
-              placeholder="请输入内容"
-              @select="handleSelectXzqdm"
-              >
-              </el-autocomplete>
-              <!-- <el-input v-model="addForm.dwmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+              <el-input disabled v-model="addForm.dwmc" auto-complete="off"  placeholder="" ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -317,54 +381,115 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="项目点代码" prop="xmddm">
-              <el-autocomplete
+              <el-select @change="onSelectedAddXmddm" v-model="addForm.xmddm" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in xzqdms"
+                  :key="item.index"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-autocomplete
               class="inline-input"
               v-model="addForm.xmddm"
               :fetch-suggestions="queryXzqdm"
               placeholder="请输入内容"
               @select="handleSelectXzqdm"
               >
-              </el-autocomplete>
+              </el-autocomplete> -->
               <!-- <el-input v-model="addForm.xmddm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="项目点名称" prop="xmdmc">
-              <el-autocomplete
+              <!-- <el-select v-model="addForm.xmdmc" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in xzqmcs"
+                  :key="item.index"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select> -->
+              <!-- <el-autocomplete
               class="inline-input"
               v-model="addForm.xmdmc"
               :fetch-suggestions="queryXzqmc"
               placeholder="请输入内容"
               @select="handleSelectXzqdm"
               >
-              </el-autocomplete>
-              <!-- <el-input v-model="addForm.xmdmc" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+              </el-autocomplete> -->
+              <el-input disabled v-model="addForm.xmdmc" auto-complete="off" placeholder="" ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="初审人" prop="csr">
-              <el-input v-model="addForm.csr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            <el-form-item label="一审人" prop="csr">
+               <el-select @change="onSelectedAddCsr" v-model="addForm.csr" placeholder="请选择">
+                  <el-option-group
+                    v-for="group in csrAndXmjl"
+                    :key="group.label"
+                    :label="group.label">
+                    <el-option
+                      v-for="item in group.options"
+                      :key="item.value"
+                      :label="item.label"
+                      :value="item.value">
+                    </el-option>
+                  </el-option-group>
+                </el-select>
+              <!-- <el-select v-model="addForm.csr" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in csr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select> -->
+              <!-- <el-input v-model="addForm.csr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="复审人" prop="fsr">
-              <el-input v-model="addForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            <el-form-item label="二审人" prop="fsr">
+              <el-select :disabled="selectedAddXmjl" v-model="addForm.fsr" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in fsr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-input v-model="addForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
         </el-row>
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="授权审核人" prop="sqshr">
-              <el-input v-model="addForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+            <el-form-item label="三审人" prop="sqshr">
+              <el-select :disabled="selectedAddXmjl" v-model="addForm.sqshr" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in sqshr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-input v-model="addForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="录入人" prop="lrr">
-              <el-input v-model="addForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input>
+              <el-select v-model="addForm.lrr" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in lrr"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-input v-model="addForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -372,20 +497,30 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="产品代码" prop="cpdm">
-              <el-autocomplete
+               <el-select v-model="addForm.cpdm" filterable placeholder="请选择">
+                <el-option
+                  v-for="item in cpdms"
+                  :key="item.value"
+                  :label="item.label"
+                  :value="item.value">
+                </el-option>
+              </el-select>
+              <!-- <el-autocomplete
                 class="inline-input"
                 v-model="addForm.cpdm"
                 :fetch-suggestions="queryCpdm"
                 placeholder="请输入内容"
                 @select="handleSelectXzqdm"
                 >
-              </el-autocomplete>
+              </el-autocomplete> -->
               <!-- <el-input v-model="addForm.cpdm" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="加密狗" prop="sfjmg">
-              <el-input v-model="addForm.sfjmg" auto-complete="off" clearable  placeholder="0：不使用，1：使用" ></el-input>
+              <el-radio v-model="addForm.sfjmg" label="1">是</el-radio>
+              <el-radio v-model="addForm.sfjmg" label="0">否</el-radio>
+              <!-- <el-input v-model="addForm.sfjmg" auto-complete="off" clearable  placeholder="0：不使用，1：使用" ></el-input> -->
             </el-form-item>
           </el-col>
 
@@ -395,7 +530,9 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
            <el-form-item label="是否授权" prop="sfsq">
-              <el-input v-model="addForm.sfsq" auto-complete="off" clearable  placeholder="0：否，1：是" ></el-input>
+              <el-radio v-model="addForm.sfsq" label="1">是</el-radio>
+              <el-radio v-model="addForm.sfsq" label="0">否</el-radio>
+              <!-- <el-input v-model="addForm.sfsq" auto-complete="off" clearable  placeholder="0：否，1：是" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -433,7 +570,7 @@
 <script>
 import axios from 'axios'
 const ADDRESS_CPDJ = '/api/product/cpdj'
-const ADDRESS_SUGGESTIONS = '/api/suggestionscpdj'
+const ADDRESS_SELECTIONS= '/api/selectionscpdj'
 
 export default {
   name: 'Dwxx',
@@ -502,8 +639,8 @@ export default {
         xmddm: '',
         xmdmc: '',
         cpdm: '',
-        sfjmg: '',
-        sfsq: '',
+        sfjmg: '0',
+        sfsq: '1',
         jzsj: '',
         csr: '',
         fsr: '',
@@ -515,9 +652,38 @@ export default {
       //附带输入建议的input
       xzqdms: [],
       xzqmcs: [],
-      cpdms:  []
+      cpdms:  [],
+      xmjl:[],
+      csr: [],
+      fsr:[],
+      sqshr:[],
+      lrr:[],
+      csrAndXmjl:[],
+      selectedAddXmjl: false,
+      selectedEditXmjl: false,
+      
+      //搜索
+      searchField:'',
+      searchOptions: [{
+        value: '单位代码',
+        label: '单位代码'
+      }, {
+        value: '单位名称',
+        label: '单位名称'
+      }, {
+        value: '项目点代码',
+        label: '项目点代码'
+      }, {
+        value: '项目点名称',
+        label: '项目点名称'
+      }, {
+        value: '产品代码',
+        label: '产品代码'
+      }]
 
-    }
+      }
+
+
   },
   computed: {
     tablePage() {
@@ -530,6 +696,67 @@ export default {
 
   },
   methods: {
+
+    onSelectedSearchField(){
+      this.filters.name = '';
+    },
+
+    onSelectedAddCsr(){
+      this.selectedAddXmjl = false;
+
+      this.xmjl.map((item)=>{
+        if (this.addForm.csr === item.value) {
+          this.selectedAddXmjl = true;
+          this.addForm.fsr = '';
+          this.addForm.sqshr = '';
+        }
+      });
+    },
+    onSelectedAddDwdm(){
+      this.xzqdms.map((item) => {
+        if (this.addForm.dwdm === item.value) {
+          this.addForm.dwmc = item.label.slice(7);
+        }
+      });
+    },
+
+    onSelectedAddXmddm(){
+      this.xzqdms.map((item) => {
+        if (this.addForm.xmddm === item.value) {
+          this.addForm.xmdmc = item.label.slice(7);
+        }
+      });
+    },
+
+
+    onSelectedEditCsr(){
+      this.selectedEditXmjl = false;
+      
+      this.xmjl.map((item)=>{
+        if (this.editForm.csr === item.value) {
+          this.selectedEditXmjl = true;
+          this.editForm.fsr = '';
+          this.editForm.sqshr = '';
+        } 
+      });
+    },
+    onSelectedEditDwdm(){
+      this.xzqdms.map((item) => {
+        if (this.editForm.dwdm === item.value) {
+          this.editForm.dwmc = item.label.slice(7);
+        }
+      });
+    },
+
+    onSelectedEditXmddm(){
+      
+      this.xzqdms.map((item) => {
+        if (this.editForm.xmddm === item.value) {
+          this.editForm.xmdmc = item.label.slice(7);
+        }
+      });
+    },
+
     getFilterDataSucc(res) {
       this.listLoading = false;
       res = res.data;
@@ -543,16 +770,56 @@ export default {
 
 
       if (this.filters.name !== '') {
-        this.tableData.map((item) => {
-          if (item.dwmc.indexOf(this.filters.name) !== -1) {
-            this.filterData.push(item);
-          }
-        });
+        switch (this.searchField) {
+          case '单位代码':
+            this.tableData.map((item) => {
+              if (item.dwdm.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '单位名称':
+            this.tableData.map((item) => {
+              if (item.dwmc.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '项目点代码':
+            this.tableData.map((item) => {
+              if (item.xmddm.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '项目点名称':
+            this.tableData.map((item) => {
+              if (item.xmdmc.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '产品代码':
+            this.tableData.map((item) => {
+              if (item.cpdm.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
 
-        this.filterData.map((item) => {
-          this.tableData = [];
-          this.tableData.push(item);
-        });
+          default:
+            break;
+        }
+
+
+ 
+
+        // this.filterData.map((item) => {
+        //   this.tableData = [];
+        //   this.tableData.push(item);
+        // });
+
+        this.tableData = this.filterData;
 
         console.log(this.filterData);
         // this.tableData = this.filterData;
@@ -568,7 +835,6 @@ export default {
 
     getFilterData() {
       this.listLoading = true;
-
       // axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
       axios.get(ADDRESS_CPDJ).then(this.getFilterDataSucc);
 
@@ -631,6 +897,7 @@ export default {
       this.addFormVisible = true;
     },
     handleEdit(index, row) {
+      this.selectedEditXmjl = false;
       row.editing = !row.editing;
       this.tablePage.map((item) => {
         item.editing = false
@@ -938,12 +1205,12 @@ export default {
     },
 
 
-    loadSuggestions() {
-      // axios.get('/api/suggestions.json').then(this.getSuggestionsSucc)
-      axios.get(ADDRESS_SUGGESTIONS).then(this.getSuggestionsSucc)
+    loadSelections() {
+      // axios.get('/api/suggestions.json').then(this.getSelectionsSucc)
+      axios.get(ADDRESS_SELECTIONS).then(this.getSelectionsSucc)
     },
 
-    getSuggestionsSucc(res) {
+    getSelectionsSucc(res) {
       console.log(res);
       res = res.data;
       if (res.code === '0000' && res.data.xzqdm) {
@@ -957,13 +1224,39 @@ export default {
       if (res.code === '0000' && res.data.cpdm) {
         this.cpdms = res.data.cpdm;
       }
+
+      
+       if (res.code === '0000' && res.data.xmjl) {
+        this.xmjl = res.data.xmjl;
+      }
+
+       if (res.code === '0000' && res.data.csr) {
+        this.csr = res.data.csr;
+      }
+
+       if (res.code === '0000' && res.data.fsr) {
+        this.fsr = res.data.fsr;
+      }
+
+       if (res.code === '0000' && res.data.sqshr) {
+        this.sqshr = res.data.sqshr;
+      }
+
+        if (res.code === '0000' && res.data.lrr) {
+        this.lrr = res.data.lrr;
+      }
+
+      this.csrAndXmjl = [{label:'一审人',options:this.csr},{label:'项目经理',options:this.xmjl}]
+
+      console.log(this.csrAndXmjl);
+      
     },
 
 
     //----------------------------------------------------------------------------------------//
 
     handleSelectXzqdm() {
-
+      
     },
 
     rowStyle(row) {
@@ -972,7 +1265,7 @@ export default {
   },
   mounted() {
     this.getDjxx();
-    this.loadSuggestions();
+    this.loadSelections();
 
   }
 }

@@ -239,7 +239,7 @@ export default {
 
      handleSave(index, row) {
        row.editing = !row.editing;
-       
+
        if (!row.index) {
          this.$confirm('是否保存新增数据?', '提示', {
            confirmButtonText: '确定',
@@ -276,7 +276,12 @@ export default {
              });
            })
          }).catch(() => {
-
+           this.getDwxx();
+           this.$message({
+             showClose: true,
+             message: '已取消保存',
+             type: 'info'
+           });
          });
 
        } else {
@@ -295,7 +300,7 @@ export default {
              'xw': '0'
            }).then((res) => {
              console.log(res);
-             
+
              if (res.data.code === '0000') {
                this.$message({
                  showClose: true,
@@ -314,10 +319,16 @@ export default {
 
            })
          }).catch(() => {
-
+           this.getDwxx();
+           this.$message({
+             showClose: true,
+             message: '已取消保存',
+             type: 'info'
+           });
          });
        }
      },
+
 
 
      handleDelete(index, row, rows) {

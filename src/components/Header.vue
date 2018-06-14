@@ -4,6 +4,7 @@
       <i class="el-icon-setting"></i>
       <el-dropdown-menu slot="dropdown">
         <el-dropdown-item command="userInfo">个人信息</el-dropdown-item>
+        <el-dropdown-item command="goToApply">申请系统</el-dropdown-item>
         <el-dropdown-item command="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
@@ -16,7 +17,10 @@
 export default {
   methods:{
     handleCommand (command) {
-      alert(command);
+      // alert(command);
+      if (command==='goToApply') {
+        window.location.href = './checkPanel.html'
+      }
     }
   }
 }

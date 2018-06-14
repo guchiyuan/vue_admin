@@ -48,11 +48,11 @@
 
       <el-table-column prop="sfwh" label="产品维护" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.sfwh" placeholder="请输入内容" 
+          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.sfwhFormatter" placeholder="请输入内容" 
                     @change="handleChange(scope.$index, scope.row)" 
                     @blur="handleBlur">
           </el-input>
-          <span v-if="!scope.row.editing">{{scope.row.sfwh}}</span>
+          <span v-if="!scope.row.editing">{{scope.row.sfwhFormatter}}</span>
         </template>
       </el-table-column>
 
@@ -195,6 +195,9 @@ export default {
       console.log(res.data);
       res = res.data;
       if (res.code === '0000' && res.data) {
+        res.data.map((item) => {
+          item.sfwhFormatter = (item.sfwh === '1')?'是':'否'; 
+        });
         this.tableData = res.data;
         this.total = res.data.length;
       }
@@ -266,7 +269,8 @@ export default {
 
      handleSave(index, row) {
        row.editing = !row.editing;
-
+       row.sfwh = (row.sfwhFormatter === '是')?'1':'0';
+       
        if (!row.index) {
          this.$confirm('是否保存新增数据?', '提示', {
            confirmButtonText: '确定',
@@ -303,7 +307,12 @@ export default {
              });
            })
          }).catch(() => {
-
+           this.getCpxx();
+           this.$message({
+              showClose: true,
+              message: '已取消保存',
+              type: 'info'
+            });       
          });
 
        } else {
@@ -338,7 +347,12 @@ export default {
 
            })
          }).catch(() => {
-
+           this.getCpxx(); 
+           this.$message({
+              showClose: true,
+              message: '已取消保存',
+              type: 'info'
+            });          
          });
        }
      },

@@ -4,8 +4,16 @@
     <div class="toolbar-top">
       <!-- <span>单位信息表</span> -->
       <el-form :inline="true" :model="filters">
+         <el-select @change="onSelectedSearchField" v-model="searchField" placeholder="请选择">
+          <el-option
+            v-for="item in searchOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <el-form-item>
-          <el-input v-model="filters.name" placeholder="角色成员" clearable></el-input>
+          <el-input v-model="filters.name" placeholder="请填入内容" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
@@ -22,14 +30,13 @@
       :header-row-style="rowStyle" @selection-change="selsChange">
       <el-table-column type="selection" width="50">
       </el-table-column>
-      <el-table-column prop="jscy" label="角色成员" sortable>
+      <el-table-column prop="jscy" label="角色成员">
         <template slot-scope="scope">
           <span>{{scope.row.jscy}}</span>
         </template>
       </el-table-column>
       <!-- :formatter="formatterJsdm" -->
-      <el-table-column prop="jsdm" label="角色代码" sortable
-      
+      <el-table-column prop="jsdm" label="角色代码"
        :filters="filterJsdm"
        :filter-method="filterHandler">
         <!-- <template slot-scope="scope">
@@ -48,19 +55,19 @@
         </template>
       </el-table-column>
 
-      <el-table-column prop="lxdh" label="联系电话" sortable>
+      <el-table-column prop="lxdh" label="联系电话">
         <template slot-scope="scope">
           <span>{{scope.row.lxdh}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="wechat" label="微信号" sortable>
+      <el-table-column prop="wechat" label="微信号">
         <template slot-scope="scope">
           <span>{{scope.row.wechat}}</span>
         </template>
       </el-table-column>
 
-      <el-table-column prop="bz" label="备注" sortable>
+      <!-- <el-table-column prop="bz" label="备注" sortable>
         <template slot-scope="scope">
           <span>{{scope.row.bz}}</span>
         </template>
@@ -70,7 +77,7 @@
         <template slot-scope="scope">
           <span>{{scope.row.pwd}}</span>
         </template>
-      </el-table-column>
+      </el-table-column> -->
 
       <el-table-column label="操作" width="160">
         <template slot-scope="scope">
@@ -101,18 +108,15 @@
               <el-input v-model="editForm.jscy" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="密码" prop="pwd">
               <el-input v-model="editForm.pwd" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
 
-        <el-form-item v-show="uneditingJsdm" label="角色代码" prop="jsdm">
-          <el-input @focus="handleFocusJsdm" v-model="editForm.jsdm" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
-        </el-form-item>
-        <el-form-item v-show="editingJsdm" label="角色代码" prop="jsdm">
-          <el-select style="width:100%" @focus="handleFocusJsdmSelect" v-model="addForm.jsdm" multiple placeholder="请选择">
+        <el-form-item  label="角色代码" prop="jsdm">
+          <el-select style="width:100%" @focus="handleFocusJsdmSelect" v-model="editForm.jsdm" multiple placeholder="请选择">
             <el-option
               v-for="item in jsdms"
               :key="item.value"
@@ -192,11 +196,11 @@
               <el-input v-model="addForm.jscy" auto-complete="off" clearable  placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="密码" prop="pwd">
               <el-input v-model="addForm.pwd" auto-complete="off" clearable placeholder="请输入内容"></el-input>
               </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
 
          <el-form-item label="角色代码" prop="jsdm">
@@ -291,7 +295,7 @@ export default {
 					name: ''
         },
       filterData:[],
-      filterJsdm:[{value:'1',text:'管理员'},{value:'2',text:'审查人员'},{value:'3',text:'登记人员'},{value:'4',text:'制作人员'}],
+      filterJsdm:[{value:'1',text:'管理员'},{value:'2',text:'实施人员'},{value:'3',text:'一审人'},{value:'4',text:'二审人'},{value:'5',text:'三审人'},{value:'6',text:'录入人'},{value:'7',text:'项目经理'},{value:'9',text:'普通用户'}],
 
 
       editFormVisible: false,//编辑界面是否显示
@@ -320,8 +324,8 @@ export default {
         pwd:'',
       },
 
-      editingJsdm:false,
-      uneditingJsdm:true,
+      // editingJsdm:false,
+      // uneditingJsdm:true,
 
       //新增界面
       addFormVisible: false,//编辑界面是否显示
@@ -375,7 +379,22 @@ export default {
        //附带输入建议的input
       ssbms: [],
       ssxmzs: [],
-      jsdms:  []
+      jsdms:  [],
+       //搜索
+      searchField:'',
+      searchOptions: [{
+        value: '角色成员',
+        label: '角色成员'
+      }, {
+        value: '角色代码',
+        label: '角色代码'
+      }, {
+        value: '所属部门',
+        label: '所属部门'
+      }, {
+        value: '所属项目组',
+        label: '所属项目组'
+      }]
     } 
   },
   computed:{
@@ -388,6 +407,9 @@ export default {
 
   },
   methods:{
+    onSelectedSearchField(){
+      this.filters.name = '';
+    },
     getFilterDataSucc(res) {
       this.listLoading = false;      
       res = res.data;
@@ -400,17 +422,47 @@ export default {
       console.log(this.tableData);
       
 
-      if (this.filters.name !== '') {    
-          this.tableData.map((item) => {
-            if (item.jscy.indexOf(this.filters.name) !== -1) {
-              this.filterData.push(item);         
-          }
-        });
+   if (this.filters.name !== '') {
+        switch (this.searchField) {
+          case '角色成员':
+            this.tableData.map((item) => {
+              if (item.jscy.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '角色代码':
+            this.tableData.map((item) => {
+              if (item.jsdm.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '所属部门':
+            this.tableData.map((item) => {
+              if (item.ssbm.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '所属项目组':
+            this.tableData.map((item) => {
+              if (item.ssxmz.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+
+          default:
+            break;
+        }
+
+        this.tableData = this.filterData;
 
         console.log(this.filterData);
         // this.tableData = this.filterData;
         console.log(this.filterData.length);
-        this.tableData = this.filterData.slice(0,this.filterData.length);
+        // this.tableData = this.filterData.slice(0,this.filterData.length);
         this.total = this.tableData.length;
         console.log(this.tableData);
         
@@ -496,11 +548,12 @@ export default {
       console.log(row);
 
 
-      this.addForm.jsdm = ''; 
+      // this.addForm.jsdm = ''; 
       this.editFormVisible = true;
-      this.editingJsdm = false;      
-      this.uneditingJsdm = true;      
-			this.editForm = Object.assign({}, row);
+      // this.editingJsdm = false;      
+      // this.uneditingJsdm = true;      
+      this.editForm = Object.assign({}, row);
+      this.editForm.jsdm = this.editForm.jsdm.split(',');
 
     },
 
@@ -644,7 +697,7 @@ export default {
                 'xw': this.editForm.xw,
                 'index': this.editForm.index,
                 'jscy': this.editForm.jscy,
-                'jsdm': this.editForm.jsdm,
+                'jsdm': this.editForm.jsdm.join(','),
                 'ssbm': this.editForm.ssbm,
                 'ssxmz': this.editForm.ssxmz,
                 'lxdh': this.editForm.lxdh,
@@ -753,42 +806,76 @@ export default {
     },
 
     // formatterJsdm(row, column) {
-    //   switch (row.jsdm) {
-    //     case "1":
-    //       return "管理员"
-    //       break;
-    //     case "2":
-    //       return "实施人员"
-    //       break;
-    //     case "3":
-    //       return "一审人"
-    //       break;
-    //     case "4":
-    //       return "二审人"
-    //       break;
-    //     case "5":
-    //       return "三审人"
-    //       break;
-    //     case "6":
-    //       return "录入人"
-    //       break;
-    //     case "7":
-    //       return "项目经理"
-    //       break;
-    //     case "9":
-    //       return "普通用户"
-    //       break;
-    //     default:
-    //       break;
+    //   let jsdmFormatter=[];
+    //   if (row.jsdm.indexOf('1') !== -1) {
+    //     jsdmFormatter.push('管理员,')
     //   }
+
+    //    if (row.jsdm.indexOf('2') !== -1) {
+    //     jsdmFormatter.push('实施人员,')
+    //   }
+
+    //    if (row.jsdm.indexOf('3') !== -1) {
+    //     jsdmFormatter.push('一审人,')
+    //   }
+
+    //    if (row.jsdm.indexOf('4') !== -1) {
+    //     jsdmFormatter.push('二审人,')
+    //   }
+
+    //    if (row.jsdm.indexOf('5') !== -1) {
+    //     jsdmFormatter.push('三审人,')
+    //   }
+
+    //    if (row.jsdm.indexOf('6') !== -1) {
+    //     jsdmFormatter.push('录入人,')
+    //   }
+
+    //    if (row.jsdm.indexOf('7') !== -1) {
+    //     jsdmFormatter.push('项目经理,')
+    //   }
+
+    //    if (row.jsdm.indexOf('9') !== -1) {
+    //     jsdmFormatter.push('普通用户,')
+    //   }
+
+    //   return jsdmFormatter
+    //   // switch (row.jsdm) {
+    //   //   case "1":
+    //   //     return "管理员"
+    //   //     break;
+    //   //   case "2":
+    //   //     return "实施人员"
+    //   //     break;
+    //   //   case "3":
+    //   //     return "一审人"
+    //   //     break;
+    //   //   case "4":
+    //   //     return "二审人"
+    //   //     break;
+    //   //   case "5":
+    //   //     return "三审人"
+    //   //     break;
+    //   //   case "6":
+    //   //     return "录入人"
+    //   //     break;
+    //   //   case "7":
+    //   //     return "项目经理"
+    //   //     break;
+    //   //   case "9":
+    //   //     return "普通用户"
+    //   //     break;
+    //   //   default:
+    //   //     break;
+    //   // }
 
     // },
 
 
 
     handleFocusJsdm() {
-      this.editingJsdm = true;
-      this.uneditingJsdm = false;
+      // this.editingJsdm = true;
+      // this.uneditingJsdm = false;
     },
 
     handleFocusJsdmSelect(){

@@ -292,8 +292,14 @@ export default {
              });
            })
          }).catch(() => {
-
+           this.getJsxx();
+           this.$message({
+             showClose: true,
+             message: '已取消保存',
+             type: 'info'
+           });
          });
+
 
        } else {
          this.$confirm('是否保存修改?', '提示', {
@@ -326,10 +332,16 @@ export default {
 
            })
          }).catch(() => {
-
+           this.getJsxx();
+           this.$message({
+             showClose: true,
+             message: '已取消保存',
+             type: 'info'
+           });
          });
        }
      },
+
 
     handleDelete(index, row, rows) {
       console.log(rows);
