@@ -145,7 +145,7 @@
     <!--编辑界面-->
     <el-dialog title="编辑" :visible.sync="editFormVisible" :close-on-click-modal="false"
       top="1vh">
-      <el-form :model="editForm" label-width="80px" :rules="editFormRules" ref="editForm">
+      <el-form :model="editForm" label-width="100px" :rules="editFormRules" ref="editForm">
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="单位代码" prop="dwdm">
@@ -347,8 +347,8 @@
         
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="editFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="editSubmit" :loading="editLoading">提交</el-button>
+        <el-button @click.native="editFormVisible = false" size="small">取消</el-button>
+        <el-button type="primary" size="small" @click.native="editSubmit" :loading="editLoading">提交</el-button>
       </div>
     </el-dialog>
 
@@ -357,7 +357,7 @@
     <!--新增界面-->
     <el-dialog title="新增" :visible.sync="addFormVisible" :close-on-click-modal="false"
       top="1vh">
-      <el-form :model="addForm" label-width="80px" :rules="addFormRules" ref="addForm">
+      <el-form :model="addForm" label-width="100px" :rules="addFormRules" ref="addForm">
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="单位代码" prop="dwdm">
@@ -559,8 +559,8 @@
         
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="addFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+        <el-button @click.native="addFormVisible = false" size="small">取消</el-button>
+        <el-button type="primary" size="small" @click.native="addSubmit" :loading="addLoading">提交</el-button>
       </div>
     </el-dialog>
   </div>
@@ -593,12 +593,17 @@ export default {
         dwdm: [{
           required: true,
           message: '请输入单位代码',
-          trigger: 'change'
+          trigger: 'blur'
         }],
-        dwmc: [{
+        xmddm: [{
           required: true,
-          message: '请输入单位名称',
-          trigger: 'change'
+          message: '请输入项目点代码',
+          trigger: 'blur'
+        }],
+        cpdm: [{
+          required: true,
+          message: '请选择产品代码',
+          trigger: 'blur'
         }]
       },
       //编辑界面数据
@@ -624,13 +629,19 @@ export default {
         dwdm: [{
           required: true,
           message: '请输入单位代码',
-          trigger: 'change'
+          trigger: 'blur'
         }],
-        dwmc: [{
+        xmddm: [{
           required: true,
-          message: '请输入单位名称',
-          trigger: 'change'
+          message: '请输入项目点代码',
+          trigger: 'blur'
+        }],
+        cpdm: [{
+          required: true,
+          message: '请选择产品代码',
+          trigger: 'blur'
         }]
+    
       },
       //编辑界面数据
       addForm: {
@@ -1301,8 +1312,10 @@ export default {
 >>>.el-dialog
   .el-form-item__label
     font-size 13px
-  .el-input
-    width 90%
+  // .el-input__inner
+  //   width 170px
+  // .el-textarea__inner
+  //   width 490px
   .el-autocomplete
     width 100%
 // .editing

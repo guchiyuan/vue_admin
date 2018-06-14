@@ -178,8 +178,8 @@
 
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="editFormVisible = false">取消</el-button>
-        <el-button type="primary" @click="editSubmit" :loading="editLoading">提交</el-button>
+        <el-button @click.native="editFormVisible = false" size="small">取消</el-button>
+        <el-button type="primary" size="small" @click="editSubmit" :loading="editLoading">提交</el-button>
       </div>
     </el-dialog>
 
@@ -264,8 +264,8 @@
         
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button @click.native="addFormVisible = false">取消</el-button>
-        <el-button type="primary" @click.native="addSubmit" :loading="addLoading">提交</el-button>
+        <el-button @click.native="addFormVisible = false" size="small">取消</el-button>
+        <el-button type="primary" size="small" @click.native="addSubmit" :loading="addLoading">提交</el-button>
       </div>
     </el-dialog>
 
@@ -301,16 +301,40 @@ export default {
       editFormVisible: false,//编辑界面是否显示
       editLoading: false,
       editFormRules: {
-        jscy: [{
+         jscy: [{
           required: true,
           message: '请输入姓名',
+          trigger: 'blur'
+        }],
+        jsdm: [{
+          required: true,
+          message: '请选择角色代码',
+          trigger: 'blur'
+        }],
+        ssbm: [{
+          required: true,
+          message: '请输入部门名称',
+          trigger: 'blur'
+        }],
+        ssxmz: [{
+          required: true,
+          message: '请输入项目组名称',
           trigger: 'blur'
         }],
         lxdh: [{
           required: true,
           message: '请输入手机号',
           trigger: 'blur'
-        }]
+          }, {
+            validator: function (rule, value, callback) {
+              if (/^1[0123456789]\d{9}$/.test(value) == false) {
+                callback(new Error("请输入正确的手机号"));
+              } else {
+                callback();
+              }
+            },
+            trigger: ['blur','change']
+          }]
       },
       //编辑界面数据
       editForm: {
@@ -334,6 +358,21 @@ export default {
         jscy: [{
           required: true,
           message: '请输入姓名',
+          trigger: 'blur'
+        }],
+        jsdm: [{
+          required: true,
+          message: '请选择角色代码',
+          trigger: 'blur'
+        }],
+        ssbm: [{
+          required: true,
+          message: '请输入部门名称',
+          trigger: 'blur'
+        }],
+        ssxmz: [{
+          required: true,
+          message: '请输入项目组名称',
           trigger: 'blur'
         }],
         lxdh: [{

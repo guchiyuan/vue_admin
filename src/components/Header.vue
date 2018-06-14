@@ -14,12 +14,28 @@
 
 
 <script>
+import axios from 'axios'
+const ADDRESS_LOGOUT = '/api/logout'
+
 export default {
   methods:{
     handleCommand (command) {
       // alert(command);
       if (command==='goToApply') {
         window.location.href = './checkPanel.html'
+      }
+
+       if (command==='logout') {
+        axios.get(ADDRESS_LOGOUT).then((res)=>{
+          if (res.code === '0000') {
+            window.location.href = './login.html'
+          } else {
+            this.$message({
+              type: 'warning',
+              message: '退出登录失败！'
+            });
+          }
+        });
       }
     }
   }
