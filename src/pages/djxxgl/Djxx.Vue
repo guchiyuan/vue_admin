@@ -25,9 +25,10 @@
 
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
+    <!-- :header-row-style="rowStyle" -->
     <!-- :highlight-current-row="editing" -->
     <el-table v-loading="listLoading" :data="tablePage" border :max-height="height" @row-dblclick="handleDbclickRow" @row-click="handleClickRow"
-      :header-row-style="rowStyle" @selection-change="selsChange">
+      @selection-change="selsChange">
       <el-table-column type="selection" width="50">
       </el-table-column>
       <el-table-column prop="dwdm" label="单位代码">
@@ -151,7 +152,7 @@
             <el-form-item label="单位代码" prop="dwdm">
               <el-select @change="onSelectedEditDwdm" v-model="editForm.dwdm" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in xzqdms"
+                  v-for="item in dwdms"
                   :key="item.index"
                   :label="item.label"
                   :value="item.value">
@@ -188,7 +189,7 @@
             <el-form-item label="项目点代码" prop="xmddm">
                <el-select @change="onSelectedEditXmddm" v-model="editForm.xmddm" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in xzqdms"
+                  v-for="item in xmddms"
                   :key="item.index"
                   :label="item.label"
                   :value="item.value">
@@ -348,6 +349,7 @@
         
       </el-form>
       <div slot="footer" class="dialog-footer">
+        <!-- editFormVisible = false -->
         <el-button @click.native="editFormVisible = false" size="small">取消</el-button>
         <el-button type="primary" size="small" @click.native="editSubmit" :loading="editLoading">提交</el-button>
       </div>
@@ -364,7 +366,7 @@
             <el-form-item label="单位代码" prop="dwdm">
               <el-select @change="onSelectedAddDwdm" v-model="addForm.dwdm" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in xzqdms"
+                  v-for="item in dwdms"
                   :key="item.index"
                   :label="item.label"
                   :value="item.value">
@@ -384,7 +386,7 @@
             <el-form-item label="项目点代码" prop="xmddm">
               <el-select @change="onSelectedAddXmddm" v-model="addForm.xmddm" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in xzqdms"
+                  v-for="item in xmddms"
                   :key="item.index"
                   :label="item.label"
                   :value="item.value">
@@ -664,7 +666,11 @@ export default {
 
       //附带输入建议的input
       xzqdms: [],
+      dwdms: [],
+      xmddms: [],
       xzqmcs: [],
+      dwmcs: [],
+      xmdmcs: [],
       cpdms:  [],
       xmjl:[],
       csr: [],
@@ -710,6 +716,11 @@ export default {
   },
   methods: {
 
+    closeAddDialog(){
+      this.editFormVisible = false;
+      this.xmddms=[];
+    },
+
     onSelectedSearchField(){
       this.filters.name = '';
     },
@@ -726,9 +737,27 @@ export default {
       });
     },
     onSelectedAddDwdm(){
-      this.xzqdms.map((item) => {
+
+      this.xmddms=[];
+      this.addForm.xmddm = '';
+      this.addForm.xmdmc = '';
+
+      // this.addForm.dwdm = this.addForm.dwdm.substring(0,6);
+
+      this.dwdms.map((item) => {
         if (this.addForm.dwdm === item.value) {
           this.addForm.dwmc = item.label.slice(7);
+        }
+      });
+
+      this.xzqdms.map((item) => {
+        let dwdm = this.addForm.dwdm;
+        if (dwdm.slice(-4) !== '0000' && dwdm.substring(0, 4) === item.value.substring(0, 4) ) {
+          this.xmddms.push(item);
+        }
+
+        if (dwdm.slice(-4) === '0000' && dwdm.substring(0, 2) === item.value.substring(0, 2) ) {
+          this.xmddms.push(item);
         }
       });
     },
@@ -754,9 +783,26 @@ export default {
       });
     },
     onSelectedEditDwdm(){
-      this.xzqdms.map((item) => {
+      this.xmddms=[];
+      this.editForm.xmddm = '';
+      this.editForm.xmdmc = '';
+
+      // this.editForm.dwdm = this.editForm.dwdm.substring(0,6);
+
+      this.dwdms.map((item) => {
         if (this.editForm.dwdm === item.value) {
           this.editForm.dwmc = item.label.slice(7);
+        }
+      });
+
+      this.xzqdms.map((item) => {
+        let dwdm = this.editForm.dwdm;
+        if (dwdm.slice(-4) !== '0000' && dwdm.substring(0, 4) === item.value.substring(0, 4) ) {
+          this.xmddms.push(item);
+        }
+
+        if (dwdm.slice(-4) === '0000' && dwdm.substring(0, 2) === item.value.substring(0, 2) ) {
+          this.xmddms.push(item);
         }
       });
     },
@@ -893,6 +939,19 @@ export default {
       // });
       // row.editing = true;
       // console.log(row.editing);
+
+      
+
+      this.selectedEditXmjl = false;
+      row.editing = !row.editing;
+      console.log(row);
+      this.tablePage.map((item) => {
+        item.editing = false
+      });
+      row.editing = true;
+
+      this.editFormVisible = true;
+      this.editForm = Object.assign({}, row);
 
     },
     handleClickRow() {
@@ -1230,6 +1289,12 @@ export default {
         this.xzqdms = res.data.xzqdm;
       }
 
+      this.xzqdms.map((item) => {
+        if (item.value.slice(-2) === '00') {
+          this.dwdms.push(item);
+        }
+      });
+
       if (res.code === '0000' && res.data.xzqmc) {
         this.xzqmcs = res.data.xzqmc;
       }
@@ -1272,9 +1337,9 @@ export default {
       
     },
 
-    rowStyle(row) {
-      return 'color:green'
-    }
+    // rowStyle(row) {
+    //   return 'color:green'
+    // }
   },
   mounted() {
     this.getDjxx();

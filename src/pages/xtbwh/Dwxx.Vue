@@ -4,8 +4,16 @@
     <div class="toolbar-top">
       <!-- <span>单位信息表</span> -->
       <el-form :inline="true" :model="filters">
+        <el-select @change="onSelectedSearchField" v-model="searchField" placeholder="请选择">
+          <el-option
+            v-for="item in searchOptions"
+            :key="item.value"
+            :label="item.label"
+            :value="item.value">
+          </el-option>
+        </el-select>
         <el-form-item>
-          <el-input v-model="filters.name" placeholder="单位名称"></el-input>
+          <el-input v-model="filters.name" placeholder="请输入内容"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
@@ -18,8 +26,10 @@
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
     <!-- :highlight-current-row="editing" -->
+    <!-- :header-row-style="rowStyle" -->
+    
     <el-table v-loading="listLoading" :data="tablePage" border :max-height="height" @row-dblclick="handleDbclickRow" @row-click="handleClickRow"
-      :header-row-style="rowStyle" @selection-change="selsChange">
+       @selection-change="selsChange">
       <el-table-column type="selection" width="50">
       </el-table-column>
       <el-table-column prop="dwdm" label="单位代码" sortable>
@@ -94,6 +104,16 @@ export default {
       },
       filterData: [],
 
+      //搜索
+      searchField:'',
+      searchOptions: [{
+        value: '单位代码',
+        label: '单位代码'
+      }, {
+        value: '单位名称',
+        label: '单位名称'
+      }]
+
     }
   },
   computed: {
@@ -106,6 +126,9 @@ export default {
 
   },
   methods: {
+    onSelectedSearchField(){
+      this.filters.name = '';
+    },
     getFilterDataSucc(res) {
       this.listLoading = false;
       res = res.data;
@@ -119,11 +142,25 @@ export default {
 
 
       if (this.filters.name !== '') {
-        this.tableData.map((item) => {
-          if (item.dwmc.indexOf(this.filters.name) !== -1) {
-            this.filterData.push(item);
-          }
-        });
+        switch (this.searchField) {
+          case '单位代码':
+            this.tableData.map((item) => {
+              if (item.dwdm.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+          case '单位名称':
+            this.tableData.map((item) => {
+              if (item.dwmc.indexOf(this.filters.name) !== -1) {
+                this.filterData.push(item);
+              }
+            });
+            break;
+
+          default:
+            break;
+        }
 
         console.log(this.filterData);
         this.tableData = this.filterData;
@@ -268,7 +305,7 @@ export default {
               } else {
                 this.$message({
                   showClose: true,
-                  message: res.data.msg,
+                  message: '新增失败，此单位代码已存在！',
                   type: 'info'
                 });
               }
@@ -316,7 +353,7 @@ export default {
               } else {
                 this.$message({
                   showClose: true,
-                  message: res.data.msg,
+                  message: '修改失败，此单位代码已存在！',
                   type: 'info'
                 });
                 this.getDwxx();
@@ -450,9 +487,9 @@ export default {
 
 
 
-    rowStyle(row) {
-      return 'color:green'
-    }
+    // rowStyle(row) {
+    //   return 'color:green'
+    // }
   },
   mounted() {
     this.getDwxx()

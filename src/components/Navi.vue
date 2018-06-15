@@ -6,7 +6,7 @@
       南京国图<br>授权管理系统      
     </div>
 
-    <el-submenu index="1">
+    <el-submenu v-if="admin" index="1">
       <template slot="title">
         <i class="el-icon-menu"></i>
         <span>系统表维护</span>
@@ -55,6 +55,12 @@
 
 export default {
   name: 'Navi',
+  data(){
+    return{
+      roleInfo:'',
+      admin:true,
+    }
+  },
   methods: {
     handleOpen(key, keyPath) {
         console.log(key);
@@ -71,6 +77,12 @@ export default {
         console.log(keyPath);
         this.$router.push(key);
 
+    }
+  },
+  mounted(){
+    this.roleInfo = JSON.parse(sessionStorage.getItem("roleInfo"));    
+    if (this.roleInfo.role === '3') {
+      this.admin = false
     }
   }
 }

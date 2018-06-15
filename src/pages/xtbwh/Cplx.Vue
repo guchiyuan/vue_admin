@@ -18,10 +18,10 @@
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
     <!-- :highlight-current-row="editing" -->
+    <!-- :header-row-style="rowStyle" -->
     <el-table v-loading="listLoading" :data="tablePage"  
               border :max-height="height" @row-dblclick="handleDbclickRow" 
               @row-click ="handleClickRow" 
-              :header-row-style="rowStyle"
               @selection-change="selsChange"
               >
       <el-table-column type="selection" width="50">
@@ -48,10 +48,18 @@
 
       <el-table-column prop="sfwh" label="产品维护" sortable>
         <template slot-scope="scope">
-          <el-input v-if="scope.row.editing" size="small" v-model="scope.row.sfwhFormatter" placeholder="请输入内容" 
+          <!-- <el-input v-if="scope.row.editing" size="small" v-model="scope.row.sfwhFormatter" placeholder="请输入内容" 
                     @change="handleChange(scope.$index, scope.row)" 
                     @blur="handleBlur">
-          </el-input>
+          </el-input> -->
+          <el-select v-if="scope.row.editing" v-model="scope.row.sfwhFormatter" filterable placeholder="请选择">
+            <el-option
+              v-for="item in sfwhOptions"
+              :key="item.index"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
           <span v-if="!scope.row.editing">{{scope.row.sfwhFormatter}}</span>
         </template>
       </el-table-column>
@@ -117,7 +125,9 @@ export default {
       filters: {
         name: ''
       },
-      filterData: []
+      filterData: [],
+
+      sfwhOptions: [{value:'否',label:'否'},{value:'是',label:'是'}]
     }
   },
   computed: {
@@ -298,7 +308,7 @@ export default {
               } else {
                 this.$message({
                   showClose: true,
-                  message: res.data.msg,
+                  message: '新增失败，此产品代码已存在！',
                   type: 'info'
                 });
               }
@@ -344,7 +354,7 @@ export default {
               } else {
                 this.$message({
                   showClose: true,
-                  message: res.data.msg,
+                  message: '修改失败，此产品代码已存在！',
                   type: 'info'
                 });
               }
@@ -476,14 +486,17 @@ export default {
         // });
       });
     },
-    rowStyle(row) {
-      return 'color:green'
-    }
+
+    // rowStyle(row) {
+    //   return 'color:green'
+    // }
   },
   mounted() {
     this.getCpxx()
 
   }
+
+
 }
 
 </script>

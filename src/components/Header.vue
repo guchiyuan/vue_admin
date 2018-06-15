@@ -22,19 +22,21 @@ export default {
     handleCommand (command) {
       // alert(command);
       if (command==='goToApply') {
-        window.location.href = './checkPanel.html'
+        window.location.href = './checkAdminPanel.html'
       }
 
        if (command==='logout') {
         axios.get(ADDRESS_LOGOUT).then((res)=>{
-          if (res.code === '0000') {
-            window.location.href = './login.html'
-          } else {
-            this.$message({
-              type: 'warning',
-              message: '退出登录失败！'
-            });
-          }
+          console.log(res);
+          
+          // if (res.code === '0000') {
+            window.location.href = '/'
+          // } else {
+          //   this.$message({
+          //     type: 'warning',
+          //     message: '退出登录失败！'
+          //   });
+          // }
         });
       }
     }

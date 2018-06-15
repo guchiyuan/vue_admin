@@ -25,9 +25,10 @@
 
       <!-- <el-button class="tool-btn" type="primary" icon="el-icon-edit" @click="handleEditBtn" circle></el-button> -->
     </div>
+    <!-- :header-row-style="rowStyle" -->
     <!-- :highlight-current-row="editing" -->
     <el-table v-loading="listLoading" :data="tablePage" border :max-height="height" @row-dblclick="handleDbclickRow" @row-click="handleClickRow"
-      :header-row-style="rowStyle" @selection-change="selsChange">
+       @selection-change="selsChange">
       <el-table-column type="selection" width="50">
       </el-table-column>
       <el-table-column prop="jscy" label="角色成员">
@@ -314,12 +315,12 @@ export default {
         ssbm: [{
           required: true,
           message: '请输入部门名称',
-          trigger: 'blur'
+          trigger: ['change','blur']
         }],
         ssxmz: [{
           required: true,
           message: '请输入项目组名称',
-          trigger: 'blur'
+          trigger: ['change','blur']
         }],
         lxdh: [{
           required: true,
@@ -368,12 +369,12 @@ export default {
         ssbm: [{
           required: true,
           message: '请输入部门名称',
-          trigger: 'blur'
+          trigger: ['change','blur']
         }],
         ssxmz: [{
           required: true,
           message: '请输入项目组名称',
-          trigger: 'blur'
+          trigger: ['change','blur']
         }],
         lxdh: [{
           required: true,
@@ -404,16 +405,16 @@ export default {
         pwd:'',
       },
 
-      optionsJsdm:[{
-          value: '1',
-          label: '管理员'
-        }, {
-          value: '2',
-          label: '双皮奶'
-        }, {
-          value: '3',
-          label: '蚵仔煎'
-        }],
+      // optionsJsdm:[{
+      //     value: '1',
+      //     label: '管理员'
+      //   }, {
+      //     value: '2',
+      //     label: '双皮奶'
+      //   }, {
+      //     value: '3',
+      //     label: '蚵仔煎'
+      //   }],
 
        //附带输入建议的input
       ssbms: [],
@@ -560,6 +561,22 @@ export default {
       // });
       // row.editing = true;
       // console.log(row.editing);
+
+      row.editing = !row.editing;
+      this.tablePage.map((item) => {
+        item.editing = false
+      });
+      row.editing = true;
+  
+      console.log(row);
+
+
+      // this.addForm.jsdm = ''; 
+      this.editFormVisible = true;
+      // this.editingJsdm = false;      
+      // this.uneditingJsdm = true;      
+      this.editForm = Object.assign({}, row);
+      this.editForm.jsdm = this.editForm.jsdm.split(',');
       
     },
     handleClickRow () {
@@ -968,9 +985,9 @@ export default {
 
 
 
-    rowStyle(row) {
-      return 'color:green'
-    }
+    // rowStyle(row) {
+    //   return 'color:green'
+    // }
   },
   mounted() {
       this.getJscy();
