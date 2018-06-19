@@ -271,9 +271,9 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="录入人" prop="lrr">
-              <el-select v-model="editForm.lrr" filterable placeholder="请选择">
+              <el-select v-model="editForm.lrr" disabled>
                 <el-option
-                  v-for="item in lrr"
+                  v-for="item in lrrs"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
@@ -484,15 +484,15 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="录入人" prop="lrr">
-              <el-select v-model="addForm.lrr" filterable placeholder="请选择">
+              <!-- <el-select v-model="addForm.lrr" filterable placeholder="请选择">
                 <el-option
                   v-for="item in lrr"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
                 </el-option>
-              </el-select>
-              <!-- <el-input v-model="addForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+              </el-select> -->
+              <el-input v-model="lrr" auto-complete="off" disabled placeholder="请输入内容" ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -575,6 +575,7 @@
 import axios from 'axios'
 const ADDRESS_CPDJ = '/api/product/cpdj'
 const ADDRESS_SELECTIONS= '/api/selectionscpdj'
+const ADDRESS_LRR = '/api/get_lrr'
 
 export default {
   name: 'Dwxx',
@@ -676,7 +677,7 @@ export default {
       csr: [],
       fsr:[],
       sqshr:[],
-      lrr:[],
+      lrrs:[],
       csrAndXmjl:[],
       selectedAddXmjl: false,
       selectedEditXmjl: false,
@@ -698,7 +699,13 @@ export default {
       }, {
         value: '产品代码',
         label: '产品代码'
-      }]
+      }],
+
+      //关于录入人
+      roleInfo:'',
+      lrr:'',
+      lrrIndex:'',
+      myDjxx:[]
 
       }
 
@@ -913,6 +920,18 @@ export default {
 
     },
 
+    getLrr() {
+       axios.get(ADDRESS_LRR)
+        .then((res) => {
+          this.lrr = res.data.lrr;
+          this.lrrIndex = res.data.lrr_index;
+
+          console.log(this.lrr);
+          
+          
+        });
+    },
+
     getDjxx() {
       this.listLoading = true;
       // axios.get('/api/djxx.json')
@@ -925,10 +944,21 @@ export default {
       console.log(res);
       res = res.data;
       if (res.code === '0000' && res.data) {
-        this.tableData = res.data;
-        this.total = res.data.length;
+        if (this.roleInfo.role === '3') {
+          res.data.map((item) => {
+            if (item.lrr === this.lrrIndex) {
+              this.myDjxx.push(item);
+            }
+          });
+          this.tableData = this.myDjxx;
+          this.total = this.myDjxx.length;
+        } else {
+          this.tableData = res.data;
+          this.total = res.data.length;
+        }
       }
     },
+
     handleChange(index, row) {
       console.log(index);
       console.log(row);
@@ -1124,7 +1154,7 @@ export default {
                  'csr': this.addForm.csr,
                  'fsr': this.addForm.fsr,
                  'sqshr': this.addForm.sqshr,
-                 'lrr': this.addForm.lrr,
+                 'lrr': this.lrrIndex,
                  'bz': this.addForm.bz
                })
                .then((res) => {
@@ -1188,7 +1218,7 @@ export default {
                   'csr': this.editForm.csr,
                   'fsr': this.editForm.fsr,
                   'sqshr': this.editForm.sqshr,
-                  'lrr': this.editForm.lrr,
+                  'lrr': this.lrrIndex,
                   'bz': this.editForm.bz
                 })
                 .then((res) => {
@@ -1320,8 +1350,8 @@ export default {
         this.sqshr = res.data.sqshr;
       }
 
-        if (res.code === '0000' && res.data.lrr) {
-        this.lrr = res.data.lrr;
+      if (res.code === '0000' && res.data.lrr) {
+        this.lrrs = res.data.lrr;
       }
 
       this.csrAndXmjl = [{label:'一审人',options:this.csr},{label:'项目经理',options:this.xmjl}]
@@ -1342,6 +1372,10 @@ export default {
     // }
   },
   mounted() {
+    this.roleInfo = JSON.parse(sessionStorage.getItem("roleInfo"));    
+    if (this.roleInfo.role === '3') {
+      this.getLrr();
+    }
     this.getDjxx();
     this.loadSelections();
 

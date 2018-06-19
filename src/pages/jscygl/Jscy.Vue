@@ -280,6 +280,7 @@
 import axios from 'axios'
 const ADDRESS_JSCY = '/api/role/jscy'
 const ADDRESS_SUGGESTIONS = '/api/suggestionsjscy'
+const ADDRESS_LRR = '/api/get_lrr'
 
 export default {
   name: 'Jscy',
@@ -434,7 +435,13 @@ export default {
       }, {
         value: '所属项目组',
         label: '所属项目组'
-      }]
+      }],
+
+      //关于录入人
+      roleInfo:'',
+      lrr:'',
+      lrrIndex:'',
+      myJscy:[]
     } 
   },
   computed:{
@@ -533,6 +540,16 @@ export default {
       
     },
 
+    getLrr() {
+       axios.get(ADDRESS_LRR)
+        .then((res) => {
+          console.log(res);
+          this.lrr = res.data.lrr;
+          this.lrrIndex = res.data.lrr_index;
+          console.log(this.lrrIndex);
+          
+        });
+    },
 
     getJscy(type) {
       this.listLoading = true;
@@ -547,8 +564,18 @@ export default {
       console.log(res);
       res = res.data;
       if (res.code === '0000' && res.data) {
-        this.tableData = res.data;
-        this.total = res.data.length;
+        if (this.roleInfo.role === '3') {
+          res.data.map((item)=>{
+            if (item.lrr === this.lrrIndex){
+              this.myJscy.push(item);
+            }
+          });
+          this.tableData = this.myJscy;
+          this.total = this.myJscy.length;          
+        } else {
+          this.tableData = res.data;
+          this.total = res.data.length;
+        }
       }
     },
     handleChange(index, row) {
@@ -759,7 +786,8 @@ export default {
                 'lxdh': this.editForm.lxdh,
                 'wechat': this.editForm.wechat,
                 'bz': this.editForm.bz,
-                'pwd': this.editForm.pwd
+                'pwd': this.editForm.pwd,
+                'lrr': this.lrrIndex                
               })
               .then((res) => {
                 console.log(res);
@@ -809,7 +837,8 @@ export default {
                 'lxdh': this.addForm.lxdh,
                 'wechat': this.addForm.wechat,
                 'bz': this.addForm.bz,
-                'pwd': this.addForm.pwd
+                'pwd': this.addForm.pwd,
+                'lrr': this.lrrIndex
               })
               .then((res) => {
                 console.log(res);
@@ -976,7 +1005,17 @@ export default {
       }
 
       if (res.code === '0000' && res.data.jsdm) {
-        this.jsdms = res.data.jsdm;
+         if (this.roleInfo.role === '3') {
+            console.log(this.jsdms);
+            res.data.jsdm.map((item)=>{
+              if (item.value === '3' || item.value === '4' || item.value === '5') {
+                this.jsdms.push(item);
+              }
+            });
+            
+          } else {
+            this.jsdms = res.data.jsdm; 
+          }
       }
     },
 
@@ -990,8 +1029,13 @@ export default {
     // }
   },
   mounted() {
-      this.getJscy();
-      this.loadSuggestions();    
+    this.roleInfo = JSON.parse(sessionStorage.getItem("roleInfo"));    
+    if (this.roleInfo.role === '3') {
+      this.getLrr();
+    }
+    this.getJscy();
+    this.loadSuggestions();
+    
   },
   // watch: {
   //   "$route.path": function (currentPath) {
