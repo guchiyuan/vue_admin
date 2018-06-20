@@ -329,6 +329,7 @@
             <el-date-picker
               v-model="editForm.jzsj"
               type="date"
+              style="width:100%"              
               placeholder="选择日期"
               value-format="yyyy-MM-dd">
             </el-date-picker>
@@ -486,13 +487,13 @@
             <el-form-item label="录入人" prop="lrr">
               <!-- <el-select v-model="addForm.lrr" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in lrr"
+                  v-for="item in lrrs"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
                 </el-option>
               </el-select> -->
-              <el-input v-model="lrr" auto-complete="off" disabled placeholder="请输入内容" ></el-input>
+              <el-input v-model="lrr" auto-complete="off" disabled placeholder="" ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -543,6 +544,7 @@
               <el-date-picker
                 v-model="addForm.jzsj"
                 type="date"
+                style="width:100%"
                 placeholder="选择日期"
                 value-format="yyyy-MM-dd">
               </el-date-picker>
@@ -997,6 +999,8 @@ export default {
     },
     handleAdd() {
       this.addFormVisible = true;
+      console.log(this.lrr);
+      
     },
     handleEdit(index, row) {
       this.selectedEditXmjl = false;
@@ -1373,9 +1377,9 @@ export default {
   },
   mounted() {
     this.roleInfo = JSON.parse(sessionStorage.getItem("roleInfo"));    
-    if (this.roleInfo.role === '3') {
+    // if (this.roleInfo.role === '3') {
       this.getLrr();
-    }
+    // }
     this.getDjxx();
     this.loadSelections();
 

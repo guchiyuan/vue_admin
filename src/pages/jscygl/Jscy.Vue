@@ -281,6 +281,7 @@ import axios from 'axios'
 const ADDRESS_JSCY = '/api/role/jscy'
 const ADDRESS_SUGGESTIONS = '/api/suggestionsjscy'
 const ADDRESS_LRR = '/api/get_lrr'
+const ADDRESS_DELETE_TIP = '/api/role/jscy_delete_tip'
 
 export default {
   name: 'Jscy',
@@ -669,96 +670,193 @@ export default {
         //调用接口
         let deleteIndex = [];
         deleteIndex.push(row.index);
-        axios.post(ADDRESS_JSCY, {
-          'index': deleteIndex,
-          'xw': '2'
+
+        //增加提示
+        axios.post(ADDRESS_DELETE_TIP, {
+        'index': deleteIndex
         }).then((res) => {
-          if (res.data.code === '0000') {
-            rows.splice(index, 1);
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
-            });
-          } else {
+        if (res.data.related === '0') {
+          axios.post(ADDRESS_JSCY, {
+            'index': deleteIndex,
+            'xw': '2'
+          }).then((res) => {
+            if (res.data.code === '0000') {
+              rows.splice(index, 1);
+              this.$message({
+                type: 'success',
+                message: '删除成功!'
+              });
+            } else {
+              this.$message({
+                type: 'info',
+                message: res.data.msg
+              });
+            }
+
+            //当前页不存在数据时，定位到前一页
+            if (this.tablePage.length === 0) {
+              this.currentPage = this.currentPage - 1;
+            }
+            this.getJscy();
+
+          }).catch(() => {
             this.$message({
               type: 'info',
-              message: res.data.msg
+              message: '删除失败'
             });
-          }
+          });
+        } else {
+          this.$confirm('此角色成员参与某些审核过程，是否继续删除?', '提示', {
+            confirmButtonText: '确定',
+            cancelButtonText: '取消',
+            type: 'warning'
+          }).then(() => {
+            axios.post(ADDRESS_JSCY, {
+              'index': deleteIndex,
+              'xw': '2'
+            }).then((res) => {
+              if (res.data.code === '0000') {
+                rows.splice(index, 1);
+                this.$message({
+                  type: 'success',
+                  message: '删除成功!'
+                });
+              } else {
+                this.$message({
+                  type: 'info',
+                  message: res.data.msg
+                });
+              }
 
-          //当前页不存在数据时，定位到前一页
-          if (this.tablePage.length === 0) {
-            this.currentPage = this.currentPage - 1;
-          }
-          this.getJscy();
-          
+              //当前页不存在数据时，定位到前一页
+              if (this.tablePage.length === 0) {
+                this.currentPage = this.currentPage - 1;
+              }
+              this.getJscy();
+
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '删除失败'
+              });
+            });
+          })
+        }
+        });
+
+
         }).catch(() => {
           this.$message({
             type: 'info',
-            message: '删除失败'
+            message: '已取消删除'
           });
         });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      });
-    },
+        },
 
-    selsChange (sels){
-      this.sels = sels;
-      console.log(sels);
-      
-    },
 
-    batchDelete() {
-      this.$confirm('是否删除这些数据?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        let deleteIndex = [];
-        this.sels.map((sel) => {
-          deleteIndex.push(sel.index);
-        });
-        console.log(deleteIndex);
-        axios.post(ADDRESS_JSCY, {
-          'index': deleteIndex,
-          'xw': '2'
-        }).then((res) => {
-          console.log(res);
-          
-          if (res.data.code === '0000') {
-            this.$message({
-              type: 'success',
-              message: '删除成功!'
+        selsChange(sels) {
+            this.sels = sels;
+            console.log(sels);
+
+          },
+
+          batchDelete() {
+            this.$confirm('是否删除这些数据?', '提示', {
+              confirmButtonText: '确定',
+              cancelButtonText: '取消',
+              type: 'warning'
+            }).then(() => {
+              let deleteIndex = [];
+              this.sels.map((sel) => {
+                deleteIndex.push(sel.index);
+              });
+              console.log(deleteIndex);
+
+
+              //增加提示
+              axios.post(ADDRESS_DELETE_TIP, {
+                'index': deleteIndex
+              }).then((res) => {
+                if (res.data.related === '0') {
+                  axios.post(ADDRESS_JSCY, {
+                    'index': deleteIndex,
+                    'xw': '2'
+                  }).then((res) => {
+                    console.log(res);
+
+                    if (res.data.code === '0000') {
+                      this.$message({
+                        type: 'success',
+                        message: '删除成功!'
+                      });
+                    } else {
+                      this.$message({
+                        type: 'info',
+                        message: res.data.msg
+                      });
+                    }
+                    //当前页不存在数据时，定位到前一页
+                    if (this.tablePage.length === 0) {
+                      this.currentPage = this.currentPage - 1;
+                    }
+                    this.getJscy();
+
+                  }).catch(() => {
+                    this.$message({
+                      type: 'info',
+                      message: '删除失败'
+                    });
+                  });
+                } else {
+                  this.$confirm('此角色成员参与某些审核过程，是否继续删除?', '提示', {
+                    confirmButtonText: '确定',
+                    cancelButtonText: '取消',
+                    type: 'warning'
+                  }).then(() => {
+                    axios.post(ADDRESS_JSCY, {
+                      'index': deleteIndex,
+                      'xw': '2'
+                    }).then((res) => {
+                      console.log(res);
+
+                      if (res.data.code === '0000') {
+                        this.$message({
+                          type: 'success',
+                          message: '删除成功!'
+                        });
+                      } else {
+                        this.$message({
+                          type: 'info',
+                          message: res.data.msg
+                        });
+                      }
+                      //当前页不存在数据时，定位到前一页
+                      if (this.tablePage.length === 0) {
+                        this.currentPage = this.currentPage - 1;
+                      }
+                      this.getJscy();
+
+                    }).catch(() => {
+                      this.$message({
+                        type: 'info',
+                        message: '删除失败'
+                      });
+                    });
+                  });
+                }
+              });
+
+
+
+
+            }).catch(() => {
+              this.$message({
+                type: 'info',
+                message: '已取消删除'
+              });
             });
-          } else {
-            this.$message({
-              type: 'info',
-              message: res.data.msg
-            });
-          }
-          //当前页不存在数据时，定位到前一页
-          if (this.tablePage.length === 0) {
-            this.currentPage = this.currentPage - 1;
-          }
-          this.getJscy();
+          },
 
-        }).catch(() => {
-          this.$message({
-            type: 'info',
-            message: '删除失败'
-          });
-        });
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消删除'
-        });
-      });
-    },
 
 
 
