@@ -13,8 +13,12 @@ export default new Router({
   routes: [
     {
       path: '/',
-      name: 'Home',
-      component: Home
+      redirect: '/jscyxx',
+      // name: 'Home',
+      // component: Home,
+      // meta: {
+      //   title: '南京国图授权管理系统'
+      // }
     },
     {
       path: '/dwxx',

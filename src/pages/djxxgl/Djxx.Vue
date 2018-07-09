@@ -611,6 +611,11 @@ export default {
           required: true,
           message: '请选择产品代码',
           trigger: 'blur'
+        }],
+        jzsj: [{
+          required: true,
+          message: '请填选截止时间',
+          trigger: 'blur'
         }]
       },
       //编辑界面数据
@@ -646,6 +651,11 @@ export default {
         cpdm: [{
           required: true,
           message: '请选择产品代码',
+          trigger: 'blur'
+        }],
+        jzsj: [{
+          required: true,
+          message: '请填选截止时间',
           trigger: 'blur'
         }]
     
@@ -998,6 +1008,7 @@ export default {
       this.editing = !this.editing
     },
     handleAdd() {
+      this.xmddms=[];
       this.addFormVisible = true;
       console.log(this.lrr);
       
@@ -1014,6 +1025,19 @@ export default {
 
       this.editFormVisible = true;
       this.editForm = Object.assign({}, row);
+
+      //保证点击编辑后，项目点代码就有可选项
+      this.xmddms=[];
+      this.xzqdms.map((item) => {
+        let dwdm = this.editForm.dwdm;
+        if (dwdm.slice(-4) !== '0000' && dwdm.substring(0, 4) === item.value.substring(0, 4) ) {
+          this.xmddms.push(item);
+        }
+
+        if (dwdm.slice(-4) === '0000' && dwdm.substring(0, 2) === item.value.substring(0, 2) ) {
+          this.xmddms.push(item);
+        }
+      });
 
     },
 
