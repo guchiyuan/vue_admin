@@ -278,10 +278,10 @@
 
 <script>
 import axios from 'axios'
-const ADDRESS_JSCY = '/api/role/jscy'
-const ADDRESS_SUGGESTIONS = '/api/suggestionsjscy'
-const ADDRESS_LRR = '/api/get_lrr'
-const ADDRESS_DELETE_TIP = '/api/role/jscy_delete_tip'
+const ADDRESS_JSCY = '/test/role/jscy'
+const ADDRESS_SUGGESTIONS = '/test/suggestionsjscy'
+const ADDRESS_LRR = '/test/get_lrr'
+const ADDRESS_DELETE_TIP = '/test/role/jscy_delete_tip'
 
 export default {
   name: 'Jscy',
@@ -522,7 +522,7 @@ export default {
     getFilterData (){
       this.listLoading = true;      
       this.currentPage = 1;
-      // axios.get('/api/jscy.json').then(this.getFilterDataSucc);
+      // axios.get('/test/jscy.json').then(this.getFilterDataSucc);
       axios.get(ADDRESS_JSCY).then(this.getFilterDataSucc);
       
     },
@@ -554,7 +554,7 @@ export default {
 
     getJscy(type) {
       this.listLoading = true;
-      // axios.get('/api/jscy.json')
+      // axios.get('/test/jscy.json')
       //   .then(this.getJscySucc)
       axios.get(ADDRESS_JSCY)
         .then(this.getJscySucc)
@@ -1087,7 +1087,7 @@ export default {
 
 
     loadSuggestions() {
-      // axios.get('/api/suggestions.json').then(this.getSuggestionsSucc)
+      // axios.get('/test/suggestions.json').then(this.getSuggestionsSucc)
       axios.get(ADDRESS_SUGGESTIONS).then(this.getSuggestionsSucc)
     },
 

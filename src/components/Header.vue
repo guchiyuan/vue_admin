@@ -8,21 +8,26 @@
         <el-dropdown-item command="logout">退出登录</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
-    <span class="userTitle">管理员</span>
+    <span class="userTitle">{{jscy}}</span>
   </div>
 </template>
 
 
 <script>
 import axios from 'axios'
-const ADDRESS_LOGOUT = '/api/logout'
+const ADDRESS_LOGOUT = '/test/logout'
 
 export default {
+  data(){
+    return {
+      jscy:'管理员'
+    }
+  },
   methods:{
     handleCommand (command) {
       // alert(command);
       if (command==='goToApply') {
-        window.location.href = './checkAdminPanel.html'
+        window.location.href = './check_admin_panel.html'
       }
 
        if (command==='logout') {
@@ -30,7 +35,7 @@ export default {
           console.log(res);
           
           // if (res.code === '0000') {
-            window.location.href = '/'
+            window.location.href = './'
           // } else {
           //   this.$message({
           //     type: 'warning',
@@ -39,6 +44,14 @@ export default {
           // }
         });
       }
+    }
+  },
+  mounted(){
+    this.roleInfo = JSON.parse(sessionStorage.getItem("roleInfo"));    
+    if (this.roleInfo.role === '3') {
+      this.jscy = '录入员'
+    } else {
+      this.jscy = '管理员'
     }
   }
 }

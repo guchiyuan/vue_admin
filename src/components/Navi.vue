@@ -3,7 +3,7 @@
   <el-menu unique-opened :default-active="$route.path" class="el-menu-vertical-demo" @select="handleSelect" @open="handleOpen" @close="handleClose" background-color="#545c64"
     text-color="#fff" active-text-color="#ffd04b">
     <div class="title">
-      南京国图<br>授权管理系统      
+      国图软件<br>授权管理系统      
     </div>
 
     <el-submenu v-if="admin" index="1">
@@ -15,6 +15,7 @@
       <el-menu-item index="/dwxx"><i class="el-icon-document"></i>单位信息表</el-menu-item>
       <el-menu-item index="/cplx"><i class="el-icon-document"></i>产品类型表</el-menu-item>
       <el-menu-item index="/jsxx"><i class="el-icon-document"></i>角色信息表</el-menu-item>
+      <el-menu-item index="/swlxr"><i class="el-icon-document"></i>商务联系人表</el-menu-item>
     </el-submenu>
 
      <!-- <el-submenu index="2">
@@ -32,6 +33,11 @@
     <el-menu-item index="/djxx">
         <i class="el-icon-document"></i>
         <span slot="title">登记信息管理</span>
+    </el-menu-item>
+
+    <el-menu-item v-if="admin" index="/rzjl">
+        <i class="el-icon-document"></i>
+        <span slot="title">日志记录管理</span>
     </el-menu-item>
 
      <!-- <el-submenu index="3">

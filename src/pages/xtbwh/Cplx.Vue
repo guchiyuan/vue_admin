@@ -5,7 +5,7 @@
       <!-- <span>产品信息表</span> -->
       <el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="产品名称"></el-input>
+					<el-input v-model="filters.name" placeholder="产品名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
@@ -64,6 +64,34 @@
         </template>
       </el-table-column>
 
+      <el-table-column prop="sfdj" label="地籍软件" sortable>
+        <template slot-scope="scope">
+          <el-select v-if="scope.row.editing" v-model="scope.row.sfdjFormatter" filterable placeholder="请选择">
+            <el-option
+              v-for="item in sfdjOptions"
+              :key="item.index"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <span v-if="!scope.row.editing">{{scope.row.sfdjFormatter}}</span>
+        </template>
+      </el-table-column>
+
+      <el-table-column prop="sffs" label="是否复审" sortable>
+        <template slot-scope="scope">
+          <el-select v-if="scope.row.editing" v-model="scope.row.sffsFormatter" filterable placeholder="请选择">
+            <el-option
+              v-for="item in sffsOptions"
+              :key="item.index"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+          <span v-if="!scope.row.editing">{{scope.row.sffsFormatter}}</span>
+        </template>
+      </el-table-column>
+
       <el-table-column label="操作">
         <template slot-scope="scope">
           <el-button
@@ -109,7 +137,7 @@
 
 <script>
 import axios from 'axios'
-const ADDRESS_CPXX = '/api/systable/cpxx'
+const ADDRESS_CPXX = '/test/systable/cpxx'
 
 export default {
   name: 'Cplx',
@@ -127,7 +155,9 @@ export default {
       },
       filterData: [],
 
-      sfwhOptions: [{value:'否',label:'否'},{value:'是',label:'是'}]
+      sfwhOptions: [{value:'否',label:'否'},{value:'是',label:'是'}],
+      sfdjOptions: [{value:'否',label:'否'},{value:'是',label:'是'}],
+      sffsOptions: [{value:'否',label:'否'},{value:'是',label:'是'}]
     }
   },
   computed: {
@@ -175,7 +205,7 @@ export default {
       this.listLoading = true;
       //解决除首页外搜索问题 
       this.currentPage = 1;
-      // axios.get('/api/cplx.json').then(this.getFilterDataSucc);
+      // axios.get('/test/cplx.json').then(this.getFilterDataSucc);
       axios.get(ADDRESS_CPXX).then(this.getFilterDataSucc);
 
     },
@@ -196,7 +226,7 @@ export default {
 
     getCpxx() {
       this.listLoading = true;
-      // axios.get('/api/cplx.json')
+      // axios.get('/test/cplx.json')
       // .then(this.getCpxxSucc)
       axios.get(ADDRESS_CPXX).then(this.getCpxxSucc)
     },
@@ -207,6 +237,8 @@ export default {
       if (res.code === '0000' && res.data) {
         res.data.map((item) => {
           item.sfwhFormatter = (item.sfwh === '1') ? '是' : '否';
+          item.sfdjFormatter = (item.sfdj === '1') ? '是' : '否';
+          item.sffsFormatter = (item.sffs === '1') ? '是' : '否';
         });
         this.tableData = res.data;
         this.total = res.data.length;
@@ -237,11 +269,26 @@ export default {
     // },
     handleAdd() {
       console.log(this.tablePage);
-      if (this.tablePage[this.tablePage.length - 1].cpdm === '') {
-        this.$message({
-          message: '亲，您还有新数据没填写完整！',
-          type: 'warning'
-        });
+      if (this.tablePage[this.tablePage.length - 1]) {
+
+        if (this.tablePage[this.tablePage.length - 1].cpdm === '') {
+          this.$message({
+            message: '亲，您还有新数据没填写完整！',
+            type: 'warning'
+          });
+        } else {
+          this.currentPage = Math.floor(this.total / this.pageSize) + 1;
+          this.tablePage.map((item) => {
+            item.editing = false
+          });
+
+          this.tablePage.push({
+            "cpdm": "",
+            "cpmc": "",
+            "sfwh": "",
+            "editing": true
+          });
+        }
       } else {
         this.currentPage = Math.floor(this.total / this.pageSize) + 1;
         this.tablePage.map((item) => {
@@ -254,8 +301,27 @@ export default {
           "sfwh": "",
           "editing": true
         });
-
       }
+
+
+      // if (this.tablePage[this.tablePage.length - 1].cpdm === '') {
+      //   this.$message({
+      //     message: '亲，您还有新数据没填写完整！',
+      //     type: 'warning'
+      //   });
+      // } else {
+      //   this.currentPage = Math.floor(this.total / this.pageSize) + 1;
+      //   this.tablePage.map((item) => {
+      //     item.editing = false
+      //   });
+
+      //   this.tablePage.push({
+      //     "cpdm": "",
+      //     "cpmc": "",
+      //     "sfwh": "",
+      //     "editing": true
+      //   });
+      // }
 
     },
     handleEdit(index, row) {
@@ -283,9 +349,11 @@ export default {
     },
 
     handleSave(index, row) {
-      if (row.cpdm && row.cpmc && row.sfwhFormatter) {
+      if (row.cpdm && row.cpmc && row.sfwhFormatter && row.sfdjFormatter && row.sffsFormatter) {
         row.editing = !row.editing;
         row.sfwh = (row.sfwhFormatter === '是') ? '1' : '0';
+        row.sfdj = (row.sfdjFormatter === '是') ? '1' : '0';
+        row.sffs = (row.sffsFormatter === '是') ? '1' : '0';
         if (!row.index) {
           this.$confirm('是否保存新增数据?', '提示', {
             confirmButtonText: '确定',
@@ -297,6 +365,8 @@ export default {
               'cpdm': row.cpdm,
               'cpmc': row.cpmc,
               'sfwh': row.sfwh,
+              'sfdj': row.sfdj,
+              'sffs': row.sffs,
               'xw': '1'
             }).then((res) => {
               if (res.data.code === '0000') {
@@ -343,6 +413,8 @@ export default {
               'cpdm': row.cpdm,
               'cpmc': row.cpmc,
               'sfwh': row.sfwh,
+              'sfdj': row.sfdj,
+              'sffs': row.sffs,
               'xw': '0'
             }).then((res) => {
               if (res.data.code === '0000') {

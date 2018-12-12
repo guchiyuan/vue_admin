@@ -5,7 +5,7 @@
       <!-- <span>产品信息表</span> -->
       <el-form :inline="true" :model="filters">
 				<el-form-item>
-					<el-input v-model="filters.name" placeholder="角色名称"></el-input>
+					<el-input v-model="filters.name" placeholder="角色名称" clearable></el-input>
 				</el-form-item>
 				<el-form-item>
 					<el-button type="primary" @click="getFilterData" icon="el-icon-search" circle></el-button>
@@ -91,7 +91,7 @@
 
 <script>
 import axios from 'axios'
-const ADDRESS_JSXX ='api/systable/jsxx'
+const ADDRESS_JSXX ='/test/systable/jsxx'
 
 export default {
   name: 'Jsxx',
@@ -155,7 +155,7 @@ export default {
         this.listLoading = true;
         //解决除首页外搜索问题 
         this.currentPage = 1;
-        // axios.get('/api/jsxx.json').then(this.getFilterDataSucc);
+        // axios.get('/test/jsxx.json').then(this.getFilterDataSucc);
         axios.get(ADDRESS_JSXX).then(this.getFilterDataSucc);
 
       },
@@ -176,7 +176,7 @@ export default {
 
       getJsxx() {
         this.listLoading = true;
-        // axios.get('/api/jsxx.json')
+        // axios.get('/test/jsxx.json')
         // .then(this.getJsxxSucc)
         axios.get(ADDRESS_JSXX)
           .then(this.getJsxxSucc)
@@ -215,11 +215,23 @@ export default {
       },
       handleAdd() {
         console.log(this.tablePage);
-        if (this.tablePage[this.tablePage.length - 1].jsdm === '') {
-          this.$message({
-            message: '亲，您还有新数据没填写完整！',
-            type: 'warning'
-          });
+        if (this.tablePage[this.tablePage.length - 1]) {
+          if (this.tablePage[this.tablePage.length - 1].jsdm === '') {
+            this.$message({
+              message: '亲，您还有新数据没填写完整！',
+              type: 'warning'
+            });
+          } else {
+            this.currentPage = Math.floor(this.total / this.pageSize) + 1;
+            this.tablePage.map((item) => {
+              item.editing = false
+            });
+            this.tablePage.push({
+              "jsdm": "",
+              "jsmc": "",
+              "editing": true
+            });
+          }
         } else {
           this.currentPage = Math.floor(this.total / this.pageSize) + 1;
           this.tablePage.map((item) => {
@@ -231,6 +243,23 @@ export default {
             "editing": true
           });
         }
+
+        // if (this.tablePage[this.tablePage.length - 1].jsdm === '') {
+        //   this.$message({
+        //     message: '亲，您还有新数据没填写完整！',
+        //     type: 'warning'
+        //   });
+        // } else {
+        //   this.currentPage = Math.floor(this.total / this.pageSize) + 1;
+        //   this.tablePage.map((item) => {
+        //     item.editing = false
+        //   });
+        //   this.tablePage.push({
+        //     "jsdm": "",
+        //     "jsmc": "",
+        //     "editing": true
+        //   });
+        // }
 
       },
       handleEdit(index, row) {

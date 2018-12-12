@@ -6,12 +6,13 @@ import Cplx from '@/pages/xtbwh/Cplx'
 import Jsxx from '@/pages/xtbwh/Jsxx'
 import Jscy from '@/pages/jscygl/Jscy'
 import Djxx from '@/pages/djxxgl/Djxx'
+import Rzjl from '@/pages/rzjlgl/Rzjl'
+import Swlxr from '@/pages/xtbwh/Swlxr'
 
 Vue.use(Router)
 
 export default new Router({
-  routes: [
-    {
+  routes: [{
       path: '/',
       redirect: '/jscyxx',
       // name: 'Home',
@@ -44,6 +45,16 @@ export default new Router({
       path: '/djxx',
       name: 'Djxx',
       component: Djxx
+    },
+    {
+      path: '/rzjl',
+      name: 'Rzjl',
+      component: Rzjl
+    }, 
+    {
+      path: '/swlxr',
+      name: 'Swlxr',
+      component: Swlxr
     }
   ]
 })

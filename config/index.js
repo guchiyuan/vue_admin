@@ -19,11 +19,19 @@ module.exports = {
       //   }
       // }
 
-        '/api': {
-        target: 'http://192.168.50.14:3000/',
+      // '/api': {
+      //   target: 'http://192.168.50.67:3000/testapi',
+      //   changeOrigin: true,
+      //   pathRewrite: {
+      //     '^/api': '/testapi'
+      //   }
+      // }
+
+      '/test': {
+        target: 'http://192.168.50.67:3333',
         changeOrigin: true,
         pathRewrite: {
-          '^/api': '/api'
+          
         }
       }
     },
@@ -36,7 +44,7 @@ module.exports = {
     notifyOnErrors: true,
     poll: false, // https://webpack.js.org/configuration/dev-server/#devserver-watchoptions-
 
-    
+
     /**
      * Source Maps
      */
@@ -53,13 +61,13 @@ module.exports = {
   },
 
   build: {
-    // Template for index.html
-    index: path.resolve(__dirname, '../dist/index.html'),
+    // Template for admin.html
+    index: path.resolve(__dirname, '../dist/admin.html'),
 
     // Paths
     assetsRoot: path.resolve(__dirname, '../dist'),
     assetsSubDirectory: 'static',
-    assetsPublicPath: '/',
+    assetsPublicPath: '/sqxt',
 
     /**
      * Source Maps

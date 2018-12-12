@@ -223,7 +223,7 @@
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="一审人" prop="csr">
+            <el-form-item label="初审人" prop="csr">
               <el-select @change="onSelectedEditCsr" v-model="editForm.csr" placeholder="请选择">
                   <el-option-group
                     v-for="group in csrAndXmjl"
@@ -241,8 +241,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="二审人" prop="fsr">
-              <el-select :disabled="selectedEditXmjl" v-model="editForm.fsr" filterable placeholder="请选择">
+            <el-form-item label="复审人" prop="fsr">
+              <el-select :disabled="selectedEditXmjl || notNeedFushen" v-model="editForm.fsr" filterable placeholder="请选择">
                 <el-option
                   v-for="item in fsr"
                   :key="item.value"
@@ -257,20 +257,20 @@
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="三审人" prop="sqshr">
-              <el-select :disabled="selectedEditXmjl" v-model="editForm.sqshr" filterable placeholder="请选择">
+            <el-form-item label="核定人" prop="hdr">
+              <el-select :disabled="selectedEditXmjl" v-model="editForm.hdr" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in sqshr"
+                  v-for="item in hdr"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
                 </el-option>
               </el-select>
-              <!-- <el-input v-model="editForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="录入人" prop="lrr">
+            <!-- <el-form-item label="录入人" prop="lrr">
               <el-select v-model="editForm.lrr" disabled>
                 <el-option
                   v-for="item in lrrs"
@@ -279,7 +279,9 @@
                   :value="item.value">
                 </el-option>
               </el-select>
-              <!-- <el-input v-model="editForm.lrr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
+            </el-form-item> -->
+            <el-form-item label="录入人" prop="lrr">
+              <el-input v-model="lrr" auto-complete="off" disabled placeholder="" ></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -287,7 +289,7 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="产品代码" prop="cpdm">
-              <el-select v-model="editForm.cpdm" filterable placeholder="请选择">
+              <el-select  @change="onSelectedEditCPDM" v-model="editForm.cpdm" filterable placeholder="请选择">
                 <el-option
                   v-for="item in cpdms"
                   :key="item.value"
@@ -429,7 +431,7 @@
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="一审人" prop="csr">
+            <el-form-item label="初审人" prop="csr">
                <el-select @change="onSelectedAddCsr" v-model="addForm.csr" placeholder="请选择">
                   <el-option-group
                     v-for="group in csrAndXmjl"
@@ -455,8 +457,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="二审人" prop="fsr">
-              <el-select :disabled="selectedAddXmjl" v-model="addForm.fsr" filterable placeholder="请选择">
+            <el-form-item label="复审人" prop="fsr">
+              <el-select :disabled="selectedAddXmjl || notNeedFushen" v-model="addForm.fsr" filterable placeholder="请选择">
                 <el-option
                   v-for="item in fsr"
                   :key="item.value"
@@ -471,16 +473,15 @@
 
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
-            <el-form-item label="三审人" prop="sqshr">
-              <el-select :disabled="selectedAddXmjl" v-model="addForm.sqshr" filterable placeholder="请选择">
+            <el-form-item label="核定人" prop="hdr">
+              <el-select :disabled="selectedAddXmjl" v-model="addForm.hdr" filterable placeholder="请选择">
                 <el-option
-                  v-for="item in sqshr"
+                  v-for="item in hdr"
                   :key="item.value"
                   :label="item.label"
                   :value="item.value">
                 </el-option>
               </el-select>
-              <!-- <el-input v-model="addForm.sqshr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -501,7 +502,7 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="产品代码" prop="cpdm">
-               <el-select v-model="addForm.cpdm" filterable placeholder="请选择">
+               <el-select @change="onSelectedAddCPDM" v-model="addForm.cpdm" filterable placeholder="请选择">
                 <el-option
                   v-for="item in cpdms"
                   :key="item.value"
@@ -575,9 +576,10 @@
 
 <script>
 import axios from 'axios'
-const ADDRESS_CPDJ = '/api/product/cpdj'
-const ADDRESS_SELECTIONS= '/api/selectionscpdj'
-const ADDRESS_LRR = '/api/get_lrr'
+const ADDRESS_CPDJ = '/test/product/cpdj'
+const ADDRESS_SELECTIONS= '/test/selectionscpdj'
+const ADDRESS_LRR = '/test/get_lrr'
+const ADDRESS_CHECK_FUSHEN ='/test/check_fushen'
 
 export default {
   name: 'Dwxx',
@@ -630,7 +632,7 @@ export default {
         jzsj: '',
         csr: '',
         fsr: '',
-        sqshr: '',
+        hdr: '',
         lrr: '',
         bz: ''
       },
@@ -672,7 +674,7 @@ export default {
         jzsj: '',
         csr: '',
         fsr: '',
-        sqshr: '',
+        hdr: '',
         lrr: '',
         bz: ''
       },
@@ -688,11 +690,12 @@ export default {
       xmjl:[],
       csr: [],
       fsr:[],
-      sqshr:[],
+      hdr:[],
       lrrs:[],
       csrAndXmjl:[],
       selectedAddXmjl: false,
       selectedEditXmjl: false,
+      notNeedFushen: false,
       
       //搜索
       searchField:'',
@@ -913,7 +916,9 @@ export default {
 
     getFilterData() {
       this.listLoading = true;
-      // axios.get('/api/dwxx.json').then(this.getFilterDataSucc);
+      //解决除首页外搜索问题 
+      this.currentPage = 1;
+      // axios.get('/test/dwxx.json').then(this.getFilterDataSucc);
       axios.get(ADDRESS_CPDJ).then(this.getFilterDataSucc);
 
     },
@@ -946,7 +951,7 @@ export default {
 
     getDjxx() {
       this.listLoading = true;
-      // axios.get('/api/djxx.json')
+      // axios.get('/test/djxx.json')
       //   .then(this.getDjxxSucc)
       axios.get(ADDRESS_CPDJ)
         .then(this.getDjxxSucc)
@@ -1038,6 +1043,19 @@ export default {
           this.xmddms.push(item);
         }
       });
+
+      axios.get(ADDRESS_CHECK_FUSHEN,{params:{
+              cpdm: this.editForm.cpdm
+            }}).then((res)=>{
+              if(res.data.code == '0000') {
+                if (res.data.data.sffs === '1') {
+                  this.notNeedFushen = false
+                } else {
+                  this.notNeedFushen = true
+                  this.editForm.fsr = null;
+              }
+            }
+        })
 
     },
 
@@ -1181,7 +1199,7 @@ export default {
                  'jzsj': this.addForm.jzsj,
                  'csr': this.addForm.csr,
                  'fsr': this.addForm.fsr,
-                 'sqshr': this.addForm.sqshr,
+                 'hdr': this.addForm.hdr,
                  'lrr': this.lrrIndex,
                  'bz': this.addForm.bz
                })
@@ -1245,7 +1263,7 @@ export default {
                   'jzsj': this.editForm.jzsj,
                   'csr': this.editForm.csr,
                   'fsr': this.editForm.fsr,
-                  'sqshr': this.editForm.sqshr,
+                  'hdr': this.editForm.hdr,
                   'lrr': this.lrrIndex,
                   'bz': this.editForm.bz
                 })
@@ -1336,7 +1354,7 @@ export default {
 
 
     loadSelections() {
-      // axios.get('/api/suggestions.json').then(this.getSelectionsSucc)
+      // axios.get('/test/suggestions.json').then(this.getSelectionsSucc)
       axios.get(ADDRESS_SELECTIONS).then(this.getSelectionsSucc)
     },
 
@@ -1374,15 +1392,15 @@ export default {
         this.fsr = res.data.fsr;
       }
 
-       if (res.code === '0000' && res.data.sqshr) {
-        this.sqshr = res.data.sqshr;
+       if (res.code === '0000' && res.data.hdr) {
+        this.hdr = res.data.hdr;
       }
 
       if (res.code === '0000' && res.data.lrr) {
         this.lrrs = res.data.lrr;
       }
 
-      this.csrAndXmjl = [{label:'一审人',options:this.csr},{label:'项目经理',options:this.xmjl}]
+      this.csrAndXmjl = [{label:'初审人',options:this.csr},{label:'项目经理',options:this.xmjl}]
 
       console.log(this.csrAndXmjl);
       
@@ -1394,6 +1412,35 @@ export default {
     handleSelectXzqdm() {
       
     },
+    onSelectedAddCPDM() {
+       axios.get(ADDRESS_CHECK_FUSHEN,{params:{
+         cpdm: this.addForm.cpdm
+       }}).then((res)=>{
+        if(res.data.code == '0000') {
+          if (res.data.data.sffs === '1') {
+            this.notNeedFushen = false
+          } else {
+            this.notNeedFushen = true
+            this.addForm.fsr = null;
+          }
+        }
+      })
+    },
+
+    onSelectedEditCPDM() {
+      axios.get(ADDRESS_CHECK_FUSHEN,{params:{
+              cpdm: this.editForm.cpdm
+            }}).then((res)=>{
+              if(res.data.code == '0000') {
+                if (res.data.data.sffs === '1') {
+                  this.notNeedFushen = false
+                } else {
+                  this.notNeedFushen = true
+                  this.editForm.fsr = null;
+              }
+            }
+          })
+    }
 
     // rowStyle(row) {
     //   return 'color:green'
