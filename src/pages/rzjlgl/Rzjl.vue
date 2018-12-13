@@ -161,6 +161,19 @@
           </el-col>
         </el-row>
 
+        <el-row type="flex" class="row-bg">
+          <el-col :span="12">
+            <el-form-item label="核定人：" prop="hdr">
+              <span>{{detailsForm.hdr}}</span>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="核定时间：" prop="hdsj">
+              <span>{{detailsForm.hdsj}}</span>           
+            </el-form-item>
+          </el-col>
+        </el-row>
+
          <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="申请时间：" prop="sqsj">
