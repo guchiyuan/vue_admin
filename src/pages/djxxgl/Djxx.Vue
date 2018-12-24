@@ -242,13 +242,18 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="复审人" prop="fsr">
-              <el-select :disabled="selectedEditXmjl || notNeedFushen" v-model="editForm.fsr" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in fsr"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
+              <el-select :disabled="selectedEditXmjl || notNeedFushenEdit" v-model="editForm.fsr" filterable placeholder="请选择">
+                <el-option-group
+                v-for="group in fsr"
+                :key="group.label"
+                :label="group.label">
+                  <el-option
+                    v-for="item in group.options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-option-group>
               </el-select>
               <!-- <el-input v-model="editForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
@@ -258,7 +263,7 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="核定人" prop="hdr">
-              <el-select :disabled="selectedEditXmjl" v-model="editForm.hdr" filterable placeholder="请选择">
+              <el-select :disabled="selectedEditXmjl || notNeed2CheckEdit" v-model="editForm.hdr" filterable placeholder="请选择">
                 <el-option
                   v-for="item in hdr"
                   :key="item.value"
@@ -458,13 +463,18 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="复审人" prop="fsr">
-              <el-select :disabled="selectedAddXmjl || notNeedFushen" v-model="addForm.fsr" filterable placeholder="请选择">
-                <el-option
-                  v-for="item in fsr"
-                  :key="item.value"
-                  :label="item.label"
-                  :value="item.value">
-                </el-option>
+              <el-select :disabled="selectedAddXmjl || notNeedFushenAdd" v-model="addForm.fsr" filterable placeholder="请选择">
+                <el-option-group
+                    v-for="group in fsr"
+                    :key="group.label"
+                    :label="group.label">
+                  <el-option
+                    v-for="item in group.options"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value">
+                  </el-option>
+                </el-option-group>
               </el-select>
               <!-- <el-input v-model="addForm.fsr" auto-complete="off" clearable  placeholder="请输入内容" ></el-input> -->
             </el-form-item>
@@ -474,7 +484,7 @@
         <el-row type="flex" class="row-bg">
           <el-col :span="12">
             <el-form-item label="核定人" prop="hdr">
-              <el-select :disabled="selectedAddXmjl" v-model="addForm.hdr" filterable placeholder="请选择">
+              <el-select :disabled="selectedAddXmjl || notNeed2CheckAdd" v-model="addForm.hdr" filterable placeholder="请选择">
                 <el-option
                   v-for="item in hdr"
                   :key="item.value"
@@ -695,7 +705,10 @@ export default {
       csrAndXmjl:[],
       selectedAddXmjl: false,
       selectedEditXmjl: false,
-      notNeedFushen: false,
+      notNeedFushenAdd: false,
+      notNeedFushenEdit: false,
+      notNeed2CheckAdd: false,
+      notNeed2CheckEdit: false,
       
       //搜索
       searchField:'',
@@ -749,12 +762,14 @@ export default {
 
     onSelectedAddCsr(){
       this.selectedAddXmjl = false;
-
+      this.notNeed2CheckAdd = false;
+      this.addForm.fsr = '';
+      this.addForm.hdr = '';
       this.xmjl.map((item)=>{
-        if (this.addForm.csr === item.value) {
+        if (this.addForm.csr === item.value && item.need2check === '0') {
           this.selectedAddXmjl = true;
-          this.addForm.fsr = '';
-          this.addForm.sqshr = '';
+        } else if(this.addForm.csr === item.value && item.need2check === '1'){
+          this.notNeed2CheckAdd = true;
         }
       });
     },
@@ -795,13 +810,15 @@ export default {
 
     onSelectedEditCsr(){
       this.selectedEditXmjl = false;
-      
+      this.notNeed2CheckEdit = false;
+      this.editForm.fsr = '';
+      this.editForm.hdr = ''; 
       this.xmjl.map((item)=>{
-        if (this.editForm.csr === item.value) {
+        if (this.editForm.csr === item.value && item.need2check === '0') {
           this.selectedEditXmjl = true;
-          this.editForm.fsr = '';
-          this.editForm.sqshr = '';
-        } 
+        } else if(this.editForm.csr === item.value && item.need2check === '1'){
+          this.notNeed2CheckEdit = true;
+        }
       });
     },
     onSelectedEditDwdm(){
@@ -1049,9 +1066,9 @@ export default {
             }}).then((res)=>{
               if(res.data.code == '0000') {
                 if (res.data.data.sffs === '1') {
-                  this.notNeedFushen = false
+                  this.notNeedFushenEdit = false
                 } else {
-                  this.notNeedFushen = true
+                  this.notNeedFushenEdit = true
                   this.editForm.fsr = null;
               }
             }
@@ -1388,8 +1405,8 @@ export default {
         this.csr = res.data.csr;
       }
 
-       if (res.code === '0000' && res.data.fsr) {
-        this.fsr = res.data.fsr;
+       if (res.code === '0000' && res.data.fsr && res.data.innerfsr) {
+        this.fsr = [{label:'复审人',options:res.data.fsr},{label:'内部复审人',options:res.data.innerfsr}]
       }
 
        if (res.code === '0000' && res.data.hdr) {
@@ -1398,6 +1415,10 @@ export default {
 
       if (res.code === '0000' && res.data.lrr) {
         this.lrrs = res.data.lrr;
+      }
+
+       if (res.code === '0000' && res.data.innerfsr) {
+        this.innerfsr = res.data.innerfsr;
       }
 
       this.csrAndXmjl = [{label:'初审人',options:this.csr},{label:'项目经理',options:this.xmjl}]
@@ -1418,9 +1439,9 @@ export default {
        }}).then((res)=>{
         if(res.data.code == '0000') {
           if (res.data.data.sffs === '1') {
-            this.notNeedFushen = false
+            this.notNeedFushenAdd = false
           } else {
-            this.notNeedFushen = true
+            this.notNeedFushenAdd = true
             this.addForm.fsr = null;
           }
         }
@@ -1433,9 +1454,9 @@ export default {
             }}).then((res)=>{
               if(res.data.code == '0000') {
                 if (res.data.data.sffs === '1') {
-                  this.notNeedFushen = false
+                  this.notNeedFushenEdit = false
                 } else {
-                  this.notNeedFushen = true
+                  this.notNeedFushenEdit = true
                   this.editForm.fsr = null;
               }
             }
